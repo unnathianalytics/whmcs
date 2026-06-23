@@ -4,6 +4,8 @@ use App\Http\Controllers\DashboardRedirectController;
 use App\Livewire\Admin\Clients\Index as AdminClients;
 use App\Livewire\Admin\Clients\Show as AdminClientShow;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
+use App\Livewire\Admin\Products\Index as AdminProducts;
+use App\Livewire\Admin\Services\Index as AdminServices;
 use App\Livewire\Saas\Companies\Index as SaasCompanies;
 use App\Livewire\Saas\Dashboard as SaasDashboard;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +27,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('/', AdminDashboard::class)->name('dashboard');
         Route::livewire('clients', AdminClients::class)->name('clients');
         Route::livewire('clients/{client}', AdminClientShow::class)->name('clients.show');
+        Route::livewire('products', AdminProducts::class)->name('products');
+        Route::livewire('services', AdminServices::class)->name('services');
     });
 });
 

@@ -28,7 +28,7 @@ class ClientFactory extends Factory
             'state' => fake()->state(),
             'postcode' => fake()->postcode(),
             'country' => fake()->countryCode(),
-            'currency' => fake()->randomElement(['USD', 'EUR', 'GBP', 'INR']),
+            'currency' => fake()->randomElement(['INR', 'EUR', 'GBP', 'INR']),
             'language' => 'en',
             'status' => fake()->randomElement(ClientStatus::cases()),
         ];
@@ -39,7 +39,7 @@ class ClientFactory extends Factory
      */
     public function active(): static
     {
-        return $this->state(fn (array $attributes): array => [
+        return $this->state(fn(array $attributes): array => [
             'status' => ClientStatus::Active,
         ]);
     }

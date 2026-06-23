@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Clients;
 
 use App\Models\Client;
 use App\Models\ClientNote;
+use App\Models\ClientService;
 use Flux\Flux;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -83,6 +84,19 @@ class Show extends Component
     public function notes(): Collection
     {
         return $this->client->notes()->with('author')->get();
+    }
+
+    /**
+     * What: The client's services, newest first, for the profile's Services card.
+     * Why: Turns the Phase 2 placeholder into a real count + list with status and expiry urgency.
+     * When: Read on render of the client profile.
+     *
+     * @return Collection<int, ClientService>
+     */
+    #[Computed]
+    public function services(): Collection
+    {
+        return $this->client->services()->with('product')->get();
     }
 
     public function render()

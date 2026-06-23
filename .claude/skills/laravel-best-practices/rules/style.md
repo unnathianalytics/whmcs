@@ -77,7 +77,7 @@ Key `Arr` methods: `Arr::get()`, `Arr::has()`, `Arr::only()`, `Arr::except()`, `
 Numbers — use `Number` for display formatting:
 ```php
 Number::format(1000000);          // "1,000,000"
-Number::currency(1500, 'USD');    // "$1,500.00"
+Number::currency(1500, 'INR');    // "$1,500.00"
 Number::abbreviate(1000000);      // "1M"
 Number::fileSize(1024 * 1024);    // "1 MB"
 Number::percentage(75.5);         // "75.5%"

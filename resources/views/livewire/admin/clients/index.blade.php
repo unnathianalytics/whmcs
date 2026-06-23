@@ -9,12 +9,8 @@
     </div>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <flux:input
-            wire:model.live.debounce.300ms="search"
-            icon="magnifying-glass"
-            placeholder="{{ __('Search clients...') }}"
-            class="max-w-sm"
-        />
+        <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass"
+            placeholder="{{ __('Search clients...') }}" class="max-w-sm" />
 
         <flux:select wire:model.live="status" placeholder="{{ __('All statuses') }}" class="max-w-44">
             <flux:select.option value="">{{ __('All statuses') }}</flux:select.option>
@@ -35,15 +31,18 @@
 
     <flux:table :paginate="$this->clients">
         <flux:table.columns>
-            <flux:table.column sortable :sorted="$sortBy === 'name'" :direction="$sortDirection" wire:click="sort('name')">
+            <flux:table.column sortable :sorted="$sortBy === 'name'" :direction="$sortDirection"
+                wire:click="sort('name')">
                 {{ __('Name') }}
             </flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'email'" :direction="$sortDirection" wire:click="sort('email')">
+            <flux:table.column sortable :sorted="$sortBy === 'email'" :direction="$sortDirection"
+                wire:click="sort('email')">
                 {{ __('Email') }}
             </flux:table.column>
             <flux:table.column>{{ __('Phone') }}</flux:table.column>
             <flux:table.column>{{ __('Country') }}</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'status'" :direction="$sortDirection" wire:click="sort('status')">
+            <flux:table.column sortable :sorted="$sortBy === 'status'" :direction="$sortDirection"
+                wire:click="sort('status')">
                 {{ __('Status') }}
             </flux:table.column>
             <flux:table.column></flux:table.column>
@@ -53,7 +52,8 @@
             @forelse ($this->clients as $client)
                 <flux:table.row :key="$client->id">
                     <flux:table.cell>
-                        <a href="{{ route('admin.clients.show', $client) }}" wire:navigate class="flex flex-col hover:underline">
+                        <a href="{{ route('admin.clients.show', $client) }}" wire:navigate
+                            class="flex flex-col hover:underline">
                             <span class="font-medium">{{ $client->name }}</span>
                             @if ($client->company_name)
                                 <flux:text size="sm">{{ $client->company_name }}</flux:text>
@@ -76,7 +76,8 @@
                             <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
 
                             <flux:menu>
-                                <flux:menu.item icon="eye" :href="route('admin.clients.show', $client)" wire:navigate>
+                                <flux:menu.item icon="eye" :href="route('admin.clients.show', $client)"
+                                    wire:navigate>
                                     {{ __('View') }}
                                 </flux:menu.item>
                                 @can('clients.update')
@@ -86,7 +87,8 @@
                                 @endcan
                                 @can('clients.delete')
                                     <flux:menu.separator />
-                                    <flux:menu.item icon="trash" variant="danger" wire:click="confirmDelete({{ $client->id }})">
+                                    <flux:menu.item icon="trash" variant="danger"
+                                        wire:click="confirmDelete({{ $client->id }})">
                                         {{ __('Delete') }}
                                     </flux:menu.item>
                                 @endcan
@@ -105,7 +107,7 @@
     </flux:table>
 
     {{-- Create / Edit modal --}}
-    <flux:modal wire:model.self="showFormModal" class="md:w-[32rem]">
+    <flux:modal wire:model.self="showFormModal" class="md:w-lg">
         <form wire:submit="save" class="flex flex-col gap-6">
             <div>
                 <flux:heading size="lg">{{ $editingId ? __('Edit Client') : __('New Client') }}</flux:heading>
@@ -171,7 +173,7 @@
 
                 <flux:field>
                     <flux:label>{{ __('Currency') }}</flux:label>
-                    <flux:input wire:model="currency" placeholder="USD" maxlength="3" />
+                    <flux:input wire:model="currency" placeholder="INR" maxlength="3" />
                     <flux:error name="currency" />
                 </flux:field>
 
@@ -186,7 +188,8 @@
                 <flux:label>{{ __('Status') }}</flux:label>
                 <flux:select wire:model="statusField">
                     @foreach ($this->statuses as $statusOption)
-                        <flux:select.option value="{{ $statusOption->value }}">{{ $statusOption->label() }}</flux:select.option>
+                        <flux:select.option value="{{ $statusOption->value }}">{{ $statusOption->label() }}
+                        </flux:select.option>
                     @endforeach
                 </flux:select>
                 <flux:error name="statusField" />
@@ -196,7 +199,8 @@
                 <flux:modal.close>
                     <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
                 </flux:modal.close>
-                <flux:button type="submit" variant="primary">{{ $editingId ? __('Save') : __('Create') }}</flux:button>
+                <flux:button type="submit" variant="primary">{{ $editingId ? __('Save') : __('Create') }}
+                </flux:button>
             </div>
         </form>
     </flux:modal>
@@ -206,7 +210,9 @@
         <div class="flex flex-col gap-6">
             <div>
                 <flux:heading size="lg">{{ __('Delete client?') }}</flux:heading>
-                <flux:text class="mt-2">{{ __('This will remove the client from your lists. This action can be reversed by support.') }}</flux:text>
+                <flux:text class="mt-2">
+                    {{ __('This will remove the client from your lists. This action can be reversed by support.') }}
+                </flux:text>
             </div>
 
             <div class="flex justify-end gap-2">

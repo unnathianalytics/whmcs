@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('state')->nullable();
             $table->string('postcode')->nullable();
             $table->string('country', 2)->nullable();
-            $table->string('currency', 3)->default('USD');
+            $table->string('currency', 3)->default('INR');
             $table->string('language', 5)->default('en');
             $table->string('status')->default('active');
             $table->timestamps();

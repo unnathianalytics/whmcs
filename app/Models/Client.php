@@ -77,6 +77,14 @@ class Client extends Model
     }
 
     /**
+     * @return HasMany<ClientService, $this>
+     */
+    public function services(): HasMany
+    {
+        return $this->hasMany(ClientService::class)->latest('starts_at');
+    }
+
+    /**
      * What: Configure the spatie activity log for clients.
      * Why: Client record changes are an auditable admin action; track the editable fields only.
      * When: Invoked automatically by the LogsActivity trait on create/update/delete.

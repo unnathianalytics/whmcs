@@ -65,7 +65,7 @@ class Index extends Component
 
     public string $country_code = '';
 
-    public string $currency = 'USD';
+    public string $currency = 'INR';
 
     public string $language = 'en';
 
@@ -98,7 +98,9 @@ class Index extends Component
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
-                'required', 'email', 'max:255',
+                'required',
+                'email',
+                'max:255',
                 Rule::unique('clients', 'email')
                     ->where('company_id', auth()->user()->company_id)
                     ->ignore($this->editingId),
@@ -268,10 +270,18 @@ class Index extends Component
     protected function resetForm(): void
     {
         $this->reset([
-            'editingId', 'name', 'email', 'phone', 'companyName', 'address',
-            'city', 'state', 'postcode', 'country_code',
+            'editingId',
+            'name',
+            'email',
+            'phone',
+            'companyName',
+            'address',
+            'city',
+            'state',
+            'postcode',
+            'country_code',
         ]);
-        $this->currency = 'USD';
+        $this->currency = 'INR';
         $this->language = 'en';
         $this->statusField = ClientStatus::Active->value;
         $this->resetValidation();
@@ -295,8 +305,8 @@ class Index extends Component
                         ->orWhere('company_name', 'like', "%{$this->search}%");
                 });
             })
-            ->when($this->status !== '', fn ($query) => $query->where('status', $this->status))
-            ->when($this->country !== '', fn ($query) => $query->where('country', $this->country))
+            ->when($this->status !== '', fn($query) => $query->where('status', $this->status))
+            ->when($this->country !== '', fn($query) => $query->where('country', $this->country))
             ->orderBy($sortBy, $sortDirection)
             ->paginate(10);
     }

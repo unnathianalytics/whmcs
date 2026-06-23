@@ -35,7 +35,17 @@
                         @else
                             <flux:sidebar.item icon="users" :disabled="true">{{ __('Clients') }}</flux:sidebar.item>
                         @endcan
-                        <flux:sidebar.item icon="cube" :disabled="true">{{ __('Services') }}</flux:sidebar.item>
+                        @can('services.view')
+                            <flux:sidebar.item icon="squares-2x2" :href="route('admin.products')" :current="request()->routeIs('admin.products*')" wire:navigate>
+                                {{ __('Products') }}
+                            </flux:sidebar.item>
+                            <flux:sidebar.item icon="cube" :href="route('admin.services')" :current="request()->routeIs('admin.services*')" wire:navigate>
+                                {{ __('Services') }}
+                            </flux:sidebar.item>
+                        @else
+                            <flux:sidebar.item icon="squares-2x2" :disabled="true">{{ __('Products') }}</flux:sidebar.item>
+                            <flux:sidebar.item icon="cube" :disabled="true">{{ __('Services') }}</flux:sidebar.item>
+                        @endcan
                         <flux:sidebar.item icon="document-text" :disabled="true">{{ __('Invoices') }}</flux:sidebar.item>
                         <flux:sidebar.item icon="lifebuoy" :disabled="true">{{ __('Tickets') }}</flux:sidebar.item>
                         <flux:sidebar.item icon="globe-alt" :disabled="true">{{ __('Domains') }}</flux:sidebar.item>

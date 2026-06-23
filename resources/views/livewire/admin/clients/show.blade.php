@@ -50,8 +50,8 @@
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <flux:card>
                     <flux:text>{{ __('Services') }}</flux:text>
-                    <flux:heading size="xl" class="mt-1">0</flux:heading>
-                    <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Coming soon') }}</flux:text>
+                    <flux:heading size="xl" class="mt-1">{{ $this->services->count() }}</flux:heading>
+                    <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Active subscriptions') }}</flux:text>
                 </flux:card>
                 <flux:card>
                     <flux:text>{{ __('Invoices') }}</flux:text>
@@ -64,6 +64,64 @@
                     <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Coming soon') }}</flux:text>
                 </flux:card>
             </div>
+
+            {{-- Services --}}
+            <flux:card>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <flux:heading size="lg">{{ __('Services') }}</flux:heading>
+                        <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Products this client is subscribed to.') }}</flux:text>
+                    </div>
+                    @can('services.view')
+                        <flux:button :href="route('admin.services')" wire:navigate size="sm" variant="ghost" icon="arrow-up-right">
+                            {{ __('Manage') }}
+                        </flux:button>
+                    @endcan
+                </div>
+
+                <flux:separator class="my-4" />
+
+                @if ($this->services->isNotEmpty())
+                    <flux:table>
+                        <flux:table.columns>
+                            <flux:table.column>{{ __('Product') }}</flux:table.column>
+                            <flux:table.column>{{ __('Cycle') }}</flux:table.column>
+                            <flux:table.column>{{ __('Price') }}</flux:table.column>
+                            <flux:table.column>{{ __('Status') }}</flux:table.column>
+                            <flux:table.column>{{ __('Expires') }}</flux:table.column>
+                        </flux:table.columns>
+
+                        <flux:table.rows>
+                            @foreach ($this->services as $service)
+                                <flux:table.row wire:key="service-{{ $service->id }}">
+                                    <flux:table.cell>
+                                        <div class="flex flex-col">
+                                            <span class="font-medium">{{ $service->product?->name ?? __('Custom') }}</span>
+                                            @if ($service->label)
+                                                <flux:text size="sm">{{ $service->label }}</flux:text>
+                                            @endif
+                                        </div>
+                                    </flux:table.cell>
+                                    <flux:table.cell>{{ $service->billing_cycle->label() }}</flux:table.cell>
+                                    <flux:table.cell>{{ $service->currency }} {{ number_format((float) $service->price, 2) }}</flux:table.cell>
+                                    <flux:table.cell>
+                                        <flux:badge :color="$service->status->color()" size="sm">{{ $service->status->label() }}</flux:badge>
+                                    </flux:table.cell>
+                                    <flux:table.cell>
+                                        @if ($service->expires_at)
+                                            <flux:badge :color="$service->urgencyColor()" size="sm">{{ $service->expires_at->format('M j, Y') }}</flux:badge>
+                                        @else
+                                            <flux:text class="text-zinc-500">{{ __('—') }}</flux:text>
+                                        @endif
+                                    </flux:table.cell>
+                                </flux:table.row>
+                            @endforeach
+                        </flux:table.rows>
+                    </flux:table>
+                @else
+                    <flux:text class="text-zinc-500">{{ __('No services yet.') }}</flux:text>
+                @endif
+            </flux:card>
 
             <flux:card>
                 <flux:heading size="lg">{{ __('Internal Notes') }}</flux:heading>
