@@ -48,6 +48,8 @@ use App\Models\Company;
 use App\Models\CompanySubscription;
 use App\Models\SaasPlan;
 use App\Models\User;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 /**
  * Create a company admin attached to an active, non-suspended company.
@@ -72,4 +74,24 @@ function companyAdmin(array $companyAttributes = []): User
         'is_saas_admin' => false,
         'company_id' => $company->id,
     ]);
+}
+
+/**
+ * Grant the given permissions to a company admin within their company's team context, and bind the
+ * spatie permission team id to that company for the rest of the test (mirrors EnsureCompanyAdmin,
+ * which does not run in Livewire::test).
+ *
+ * @param  list<string>  $permissions
+ */
+function grantPermissions(User $user, array $permissions): User
+{
+    app(PermissionRegistrar::class)->setPermissionsTeamId($user->company_id);
+
+    foreach ($permissions as $permission) {
+        Permission::findOrCreate($permission, 'web');
+    }
+
+    $user->givePermissionTo($permissions);
+
+    return $user;
 }

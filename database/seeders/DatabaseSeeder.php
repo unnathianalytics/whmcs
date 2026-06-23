@@ -85,5 +85,10 @@ class DatabaseSeeder extends Seeder
         // Assign the tenant-scoped `manager` role within this company's team context.
         app(PermissionRegistrar::class)->setPermissionsTeamId($company->id);
         $companyAdmin->syncRoles(['manager']);
+
+        // Demo client data for the Clients module (Phase 2).
+        $this->call([
+            ClientSeeder::class,
+        ]);
     }
 }

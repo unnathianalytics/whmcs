@@ -28,7 +28,13 @@
                     </flux:sidebar.group>
 
                     <flux:sidebar.group :heading="__('Management')" class="grid">
-                        <flux:sidebar.item icon="users" :disabled="true">{{ __('Clients') }}</flux:sidebar.item>
+                        @can('clients.view')
+                            <flux:sidebar.item icon="users" :href="route('admin.clients')" :current="request()->routeIs('admin.clients*')" wire:navigate>
+                                {{ __('Clients') }}
+                            </flux:sidebar.item>
+                        @else
+                            <flux:sidebar.item icon="users" :disabled="true">{{ __('Clients') }}</flux:sidebar.item>
+                        @endcan
                         <flux:sidebar.item icon="cube" :disabled="true">{{ __('Services') }}</flux:sidebar.item>
                         <flux:sidebar.item icon="document-text" :disabled="true">{{ __('Invoices') }}</flux:sidebar.item>
                         <flux:sidebar.item icon="lifebuoy" :disabled="true">{{ __('Tickets') }}</flux:sidebar.item>
