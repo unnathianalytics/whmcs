@@ -7,10 +7,18 @@ test('guests are redirected to the login page', function () {
     $response->assertRedirect(route('login'));
 });
 
-test('authenticated users can visit the dashboard', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user);
+test('saas admins are redirected from dashboard to the saas area', function () {
+    $admin = User::factory()->create(['is_saas_admin' => true]);
 
-    $response = $this->get(route('dashboard'));
-    $response->assertOk();
+    $this->actingAs($admin)
+        ->get(route('dashboard'))
+        ->assertRedirect(route('saas.dashboard'));
+});
+
+test('company admins are redirected from dashboard to the admin area', function () {
+    $user = companyAdmin();
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertRedirect(route('admin.dashboard'));
 });

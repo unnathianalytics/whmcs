@@ -44,7 +44,32 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+use App\Models\Company;
+use App\Models\CompanySubscription;
+use App\Models\SaasPlan;
+use App\Models\User;
+
+/**
+ * Create a company admin attached to an active, non-suspended company.
+ *
+ * @param  array<string, mixed>  $companyAttributes
+ */
+function companyAdmin(array $companyAttributes = []): User
 {
-    // ..
+    $company = Company::factory()->create(array_merge([
+        'suspended_at' => null,
+        'trial_ends_at' => now()->addDays(14),
+    ], $companyAttributes));
+
+    CompanySubscription::factory()->create([
+        'company_id' => $company->id,
+        'saas_plan_id' => SaasPlan::factory(),
+        'status' => 'active',
+        'ends_at' => now()->addMonth(),
+    ]);
+
+    return User::factory()->create([
+        'is_saas_admin' => false,
+        'company_id' => $company->id,
+    ]);
 }

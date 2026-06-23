@@ -1,11 +1,27 @@
 <?php
 
+use App\Http\Controllers\DashboardRedirectController;
+use App\Livewire\Admin\Dashboard as AdminDashboard;
+use App\Livewire\Saas\Companies\Index as SaasCompanies;
+use App\Livewire\Saas\Dashboard as SaasDashboard;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    // Fortify lands every user on `dashboard`; this hop sends each tier to its real home.
+    Route::get('dashboard', DashboardRedirectController::class)->name('dashboard');
+
+    // SaaS Admin area — platform owner only.
+    Route::middleware('saas_admin')->prefix('saas')->name('saas.')->group(function () {
+        Route::livewire('/', SaasDashboard::class)->name('dashboard');
+        Route::livewire('companies', SaasCompanies::class)->name('companies');
+    });
+
+    // Company Admin area — tenant-scoped admins.
+    Route::middleware('company_admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::livewire('/', AdminDashboard::class)->name('dashboard');
+    });
 });
 
 require __DIR__.'/settings.php';

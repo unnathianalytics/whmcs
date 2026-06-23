@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureCompanyAdmin;
+use App\Http\Middleware\EnsureSaasAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,7 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'saas_admin' => EnsureSaasAdmin::class,
+            'company_admin' => EnsureCompanyAdmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
