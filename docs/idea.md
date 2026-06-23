@@ -2,9 +2,75 @@
 
 ## Overview
 
-Build a solid, production-ready hosting billing & client management admin panel inspired by WHMCS. The stack is **Laravel 13 + Livewire 4 + Flux UI v2 (Pro)** — no raw Blade tables, everything uses Flux components.
+Build a solid, production-ready **multi-tenant SaaS** hosting billing & client management panel inspired by WHMCS. The stack is **Laravel 13 + Livewire 4 + Flux UI v2 (Pro)** — no raw Blade tables, everything uses Flux components.
 
-Default superadmin credentials: `admin@admin.com` / `admin@admin.com` (seeded on first run).
+---
+
+## SaaS Architecture
+
+This is a **multi-tenant SaaS product**. There are two distinct user tiers:
+
+### Tier 1 — SaaS Admin (`saas_admin`)
+The platform owner. One account, global scope.
+
+| Responsibility | Notes |
+|---|---|
+| Company (tenant) management | Create, suspend, delete companies |
+| Subscription plans | Define SaaS plans (e.g. Starter, Pro, Agency) with feature limits |
+| Subscription assignment | Assign/change a company's plan, set trial/expiry dates |
+| Billing overview | See MRR, active tenants, churned companies |
+| Impersonate any company | Log in as any company admin for debugging |
+| Global settings | Platform-level SMTP, branding, feature flags |
+
+**Credentials (seeded):** `admin@admin.com` / `admin@admin.com`
+
+**Model:** Uses the existing `User` model with a boolean flag `is_saas_admin = true` (or a dedicated `saas_admin` role via spatie).
+
+**Scope:** SaaS Admin has no access to individual company data (clients, invoices, tickets) except via impersonation.
+
+---
+
+### Tier 2 — Company Admins
+Each **Company** (tenant) has one or more admin `User` accounts scoped to that company.
+
+| Responsibility | Notes |
+|---|---|
+| Manage their own clients, services, invoices, tickets, domains | Fully isolated per company |
+| Invite & manage sub-admins | Assign roles (Manager, Billing, Support, Read-only) within the company |
+| Company settings | Their own SMTP, branding, invoice prefix, currency |
+
+**Model:** `Company` — every tenant-scoped resource has a `company_id` foreign key.
+
+---
+
+### Tenancy Approach
+
+- **Single database, `company_id` scoping** — simplest for v1; every query is scoped via a global scope or explicit `where('company_id', auth()->user()->company_id)`.
+- No subdomain routing in v1 — all companies share the same URL; company is resolved from the authenticated user's `company_id`.
+- Spatie roles/permissions are **scoped per company** using spatie's built-in team/guard support (`teams` feature enabled).
+
+---
+
+### URL Structure
+
+```
+/saas/*          → SaaS Admin area (company management, subscriptions, billing)
+/admin/*         → Company admin area (clients, invoices, tickets, etc.)
+```
+
+Middleware:
+- `saas_admin` middleware — protects `/saas/*`, checks `is_saas_admin`
+- `company_admin` middleware — protects `/admin/*`, checks `company_id` is set and subscription is active
+
+---
+
+### SaaS Models
+
+```
+companies              → tenant records (name, slug, plan_id, trial_ends_at, suspended_at)
+saas_plans             → subscription plan definitions (name, price, limits JSON)
+company_subscriptions  → which plan a company is on, billing dates, status
+```
 
 ---
 
@@ -136,17 +202,30 @@ Automated, configurable notifications sent before anything expires.
 
 ---
 
-### 7. Admin Users & Roles
-Multiple admins with role-based access.
+### 7. Admin Users, Roles & Permissions
+Multiple admins per company with permission-based access control.
 
 | Feature | Notes |
 |---|---|
 | Admin accounts | Separate from client accounts; use existing `User` model |
-| Roles | Superadmin, Billing, Support, Read-only |
-| Permissions | Per-role permission gates (Laravel policies/gates) |
-| Admin activity log | Who did what and when |
+| Roles | e.g. Manager, Billing, Support, Read-only — defined per company |
+| Permissions | Granular permission strings (e.g. `clients.view`, `invoices.create`) — all route/action gates check permissions, never roles directly |
+| Role–Permission UI | Assign/sync permissions to roles via a dedicated admin screen |
+| Admin activity log | Powered by `spatie/laravel-activitylog` — logs who did what, on which model, and when |
 
-**Models:** `Role`, `Permission` (or use a lightweight custom RBAC — no spatie unless needed)
+**Packages:**
+- `spatie/laravel-permission` — roles & permissions with `hasPermissionTo()` checks on every gate/policy
+- `spatie/laravel-activitylog` — replaces custom `activity_log` table; use `LogsActivity` trait on all key models
+
+**Authorization rule:** Gates, policies, and middleware must check **permissions** (e.g. `$user->can('invoices.create')`), never role names. Role names are only used in the Role–Permission UI to group and assign permissions.
+
+**Roles (default seed per company):**
+- `manager` — full access within the company (all permissions)
+- `billing` — invoices, payments, clients (read)
+- `support` — tickets, clients (read)
+- `read-only` — view-only across all modules
+
+**Models:** Provided by `spatie/laravel-permission` (`Role`, `Permission`, pivot tables)
 
 ---
 
@@ -195,7 +274,10 @@ System-wide configuration.
 ## Database Design (High Level)
 
 ```
-users                  → admin accounts (existing)
+users                  → admin accounts (existing); is_saas_admin flag for platform owner
+companies              → tenant records (name, plan_id, trial_ends_at, suspended_at)
+saas_plans             → SaaS subscription plan definitions (limits JSON)
+company_subscriptions  → company ↔ plan assignment with billing dates & status
 clients                → customer accounts
 client_notes           → internal notes on clients
 product_groups         → hosting plan categories
@@ -213,9 +295,12 @@ ticket_replies         → messages in a thread
 domains                → domain registrations per client (registered_at, expires_at)
 reminder_rules         → configurable reminder templates (resource_type, days_before, channels)
 reminder_logs          → sent reminder history (prevents duplicate sends)
-roles                  → admin role definitions
-role_user              → pivot: admin ↔ role
-activity_log           → admin audit trail
+roles                  → spatie/laravel-permission (scoped per company/tenant)
+permissions            → spatie/laravel-permission
+model_has_roles        → spatie pivot: user ↔ role
+model_has_permissions  → spatie pivot: user ↔ permission (direct)
+role_has_permissions   → spatie pivot: role ↔ permission
+activity_log           → spatie/laravel-activitylog (subject_type, causer_type, properties JSON)
 settings               → key/value system settings
 ```
 
@@ -223,10 +308,17 @@ settings               → key/value system settings
 
 ## Implementation Phases
 
-### Phase 1 — Foundation
-- [ ] Seed `admin@admin.com` / `admin@admin.com` superadmin via `DatabaseSeeder`
-- [ ] Admin role & permission gates
-- [ ] Sidebar nav with all module links (inactive placeholders ok)
+### Phase 1 — Foundation & SaaS Structure
+- [ ] Seed `admin@admin.com` / `admin@admin.com` as SaaS Admin (`is_saas_admin = true`) via `DatabaseSeeder`
+- [ ] `Company`, `SaasPlan`, `CompanySubscription` models + migrations
+- [ ] Install & configure `spatie/laravel-permission` with teams (company-scoped roles)
+- [ ] Install & configure `spatie/laravel-activitylog`
+- [ ] Default permission set seeded (e.g. `clients.view`, `clients.create`, `invoices.view`, etc.)
+- [ ] Default roles seeded per company: `manager`, `billing`, `support`, `read-only`
+- [ ] `saas_admin` middleware + `/saas/*` route group
+- [ ] `company_admin` middleware + `/admin/*` route group with `company_id` scoping
+- [ ] Sidebar nav for company admin area (all module links, inactive placeholders ok)
+- [ ] SaaS Admin area: company list + create company screen
 - [ ] Dashboard shell (stat cards, empty charts)
 
 ### Phase 2 — Clients
@@ -276,7 +368,15 @@ settings               → key/value system settings
 - [ ] Reminder settings section (default lead times, global on/off)
 - [ ] Dashboard charts wired to real data
 - [ ] Dashboard expiry widgets wired to real data
-- [ ] Admin activity log
+- [ ] **Role–Permission UI** — Livewire screen at `/admin/roles` to create roles, list all permissions, and sync permissions to roles (checkbox matrix)
+- [ ] Admin activity log viewer (powered by spatie/laravel-activitylog)
+
+### Phase 9 — SaaS Admin Area
+- [ ] SaaS Admin dashboard (MRR, active tenants, churn)
+- [ ] Company management (create, suspend, delete, impersonate)
+- [ ] SaaS plan management (define plans with feature limits)
+- [ ] Subscription assignment (assign plan to company, set trial/expiry)
+- [ ] Company impersonation (log in as any company admin)
 
 ---
 
@@ -285,18 +385,20 @@ settings               → key/value system settings
 ```php
 // DatabaseSeeder
 User::create([
-    'name'     => 'Admin',
-    'email'    => 'admin@admin.com',
-    'password' => 'admin@admin.com',  // hashed via 'hashed' cast
+    'name'          => 'Admin',
+    'email'         => 'admin@admin.com',
+    'password'      => 'admin@admin.com',  // hashed via 'hashed' cast
+    'is_saas_admin' => true,
 ]);
 ```
 
-Sample data for development:
+Sample data for development (scoped to a seeded demo `Company`):
 - 10 fake clients
 - 3 product groups, 8 products
 - 20 invoices (mix of paid/unpaid/overdue)
 - 15 support tickets
 - 5 domains
+- 1 demo company with all default roles and permissions assigned
 
 ---
 
@@ -309,7 +411,8 @@ Sample data for development:
 | Reactivity | Livewire 4 class-based components | Project convention |
 | PDF invoices | `barryvdh/laravel-dompdf` (to install) | Lightweight, no Node dependency |
 | Charts | Flux-compatible Alpine.js + Chart.js CDN | No extra package needed |
-| RBAC | Custom gates/policies | Keep dependencies minimal |
+| RBAC | `spatie/laravel-permission` | Permission-based gates (not role-based); Role–Permission UI for admins |
+| Activity log | `spatie/laravel-activitylog` | Model-level audit trail; `LogsActivity` trait on key models |
 | Email | Laravel Mail + queue | Standard Laravel pattern |
 | Encryption | Laravel `encrypt()` for gateway API keys | Built-in, no extra package |
 | Reminders | Laravel Scheduler + Mail + queue | `reminders:send` runs daily; queued Mailables prevent timeout |
@@ -324,3 +427,5 @@ Sample data for development:
 - Reseller / affiliate system
 - Crypto payment gateways
 - Multi-language / i18n UI
+- SaaS billing automation (Stripe for SaaS subscriptions) — manual plan assignment in v1
+- Per-company subdomain routing — single URL, company resolved from user's `company_id`
