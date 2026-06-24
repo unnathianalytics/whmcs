@@ -308,45 +308,45 @@ settings               → key/value system settings
 
 ## Implementation Phases
 
-### Phase 1 — Foundation & SaaS Structure
-- [ ] Seed `admin@admin.com` / `admin@admin.com` as SaaS Admin (`is_saas_admin = true`) via `DatabaseSeeder`
-- [ ] `Company`, `SaasPlan`, `CompanySubscription` models + migrations
-- [ ] Install & configure `spatie/laravel-permission` with teams (company-scoped roles)
-- [ ] Install & configure `spatie/laravel-activitylog`
-- [ ] Default permission set seeded (e.g. `clients.view`, `clients.create`, `invoices.view`, etc.)
-- [ ] Default roles seeded per company: `manager`, `billing`, `support`, `read-only`
-- [ ] `saas_admin` middleware + `/saas/*` route group
-- [ ] `company_admin` middleware + `/admin/*` route group with `company_id` scoping
-- [ ] Sidebar nav for company admin area (all module links, inactive placeholders ok)
-- [ ] SaaS Admin area: company list + create company screen
-- [ ] Dashboard shell (stat cards, empty charts)
+### Phase 1 — Foundation & SaaS Structure ✅ Completed
+- [x] Seed `admin@admin.com` / `admin@admin.com` as SaaS Admin (`is_saas_admin = true`) via `DatabaseSeeder`
+- [x] `Company`, `SaasPlan`, `CompanySubscription` models + migrations
+- [x] Install & configure `spatie/laravel-permission` with teams (company-scoped roles)
+- [x] Install & configure `spatie/laravel-activitylog`
+- [x] Default permission set seeded (e.g. `clients.view`, `clients.create`, `invoices.view`, etc.)
+- [x] Default roles seeded per company: `manager`, `billing`, `support`, `read-only`
+- [x] `saas_admin` middleware + `/saas/*` route group
+- [x] `company_admin` middleware + `/admin/*` route group with `company_id` scoping
+- [x] Sidebar nav for company admin area (all module links, inactive placeholders ok)
+- [x] SaaS Admin area: company list + create company screen
+- [x] Dashboard shell (stat cards, empty charts)
 
-### Phase 2 — Clients
-- [ ] `Client` model + migration + factory
-- [ ] Client list (Flux table, search, filter, pagination)
-- [ ] Create/Edit client modal
-- [ ] Client profile page
-- [ ] Client notes
+### Phase 2 — Clients ✅ Completed
+- [x] `Client` model + migration + factory
+- [x] Client list (Flux table, search, filter, pagination)
+- [x] Create/Edit client modal
+- [x] Client profile page
+- [x] Client notes
 
-### Phase 3 — Products & Services
-- [ ] `ProductGroup`, `Product`, `ProductPricing` models
-- [ ] Products admin UI
-- [ ] `ClientService` model with `starts_at`, `expires_at`, `next_due_date`, `billing_cycle`
-- [ ] Assign service to client, manage status
-- [ ] Expiry date visible on service list with color-coded urgency
+### Phase 3 — Products & Services ✅ Completed
+- [x] `ProductGroup`, `Product`, `ProductPricing` models
+- [x] Products admin UI
+- [x] `ClientService` model with `starts_at`, `expires_at`, `next_due_date`, `billing_cycle`
+- [x] Assign service to client, manage status
+- [x] Expiry date visible on service list with color-coded urgency
 
-### Phase 4 — Invoices & Billing
-- [ ] `Invoice`, `InvoiceItem`, `Transaction` models
-- [ ] Invoice list + create/edit
-- [ ] Record payment
-- [ ] Invoice PDF generation
-- [ ] Tax rate management
+### Phase 4 — Invoices & Billing ✅ Completed
+- [x] `Invoice`, `InvoiceItem`, `Transaction` models
+- [x] Invoice list + create/edit
+- [x] Record payment
+- [x] Invoice PDF generation
+- [x] Tax rate management
 
-### Phase 5 — Support Tickets
-- [ ] `TicketDepartment`, `Ticket`, `TicketReply` models
-- [ ] Ticket list with filters
-- [ ] Ticket thread view + reply form
-- [ ] Status & priority management
+### Phase 5 — Support Tickets ✅ Completed
+- [x] `TicketDepartment`, `Ticket`, `TicketReply` models
+- [x] Ticket list with filters
+- [x] Ticket thread view + reply form
+- [x] Status & priority management
 
 ### Phase 6 — Domains
 - [ ] `Domain` model with `registered_at`, `expires_at`

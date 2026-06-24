@@ -21,6 +21,7 @@ For all implementation tasks, adhere to the following lifecycle:
    - **Validation**: Specific tests, checks, or manual verifications run.
    - **Postponed Items**: Tasks deferred to a later date.
    - **Follow-up Recommendations**: Next steps or technical debt to monitor.
+   - **Update plans/idea.md**: After each phase completed, mark the completed phase as completed and add a completion summery below it. Add reference to the completed file too.
 7. **Workflow Exceptions**: For small, low-risk changes, you may ask the user if planning/completion documents can be bypassed. **Never bypass documentation** if the change affects database migrations, models, core services, security, or other breaking areas.
 8. **Version Control**: Only after completing a task (generating completion report), provide a clean, descriptive and detailed commit message summarizing what was added, changed, or removed.
 
