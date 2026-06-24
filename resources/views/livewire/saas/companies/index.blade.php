@@ -51,13 +51,24 @@
                     </flux:table.cell>
 
                     <flux:table.cell align="end">
-                        <flux:button
-                            size="sm"
-                            variant="{{ $company->isSuspended() ? 'primary' : 'ghost' }}"
-                            wire:click="toggleSuspend({{ $company->id }})"
-                        >
-                            {{ $company->isSuspended() ? __('Reactivate') : __('Suspend') }}
-                        </flux:button>
+                        <div class="flex justify-end gap-2">
+                            <flux:button
+                                size="sm"
+                                variant="{{ $company->isSuspended() ? 'primary' : 'ghost' }}"
+                                wire:click="toggleSuspend({{ $company->id }})"
+                            >
+                                {{ $company->isSuspended() ? __('Reactivate') : __('Suspend') }}
+                            </flux:button>
+                            <flux:button
+                                size="sm"
+                                variant="ghost"
+                                icon="arrow-right"
+                                :href="route('saas.companies.show', $company)"
+                                wire:navigate
+                            >
+                                {{ __('Manage') }}
+                            </flux:button>
+                        </div>
                     </flux:table.cell>
                 </flux:table.row>
             @empty

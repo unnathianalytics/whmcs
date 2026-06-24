@@ -74,6 +74,19 @@ class Company extends Model
     }
 
     /**
+     * What: Every subscription row this company has ever had.
+     * Why: The SaaS Admin needs the full lifecycle (status transitions, billing windows) beyond the
+     *      single latest row exposed by `subscription()`.
+     * When: Read on the company detail screen and for churn/history reporting.
+     *
+     * @return HasMany<CompanySubscription, $this>
+     */
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(CompanySubscription::class);
+    }
+
+    /**
      * @return HasMany<User, $this>
      */
     public function users(): HasMany

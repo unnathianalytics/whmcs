@@ -406,12 +406,27 @@ settings               → key/value system settings
 > per company. Settings/Roles/ActivityLog gate on the already-seeded `settings.*` / `roles.*` permissions.
 > Tests: 201 passed (+27 new).
 
-### Phase 9 — SaaS Admin Area
-- [ ] SaaS Admin dashboard (MRR, active tenants, churn)
-- [ ] Company management (create, suspend, delete, impersonate)
-- [ ] SaaS plan management (define plans with feature limits)
-- [ ] Subscription assignment (assign plan to company, set trial/expiry)
-- [ ] Company impersonation (log in as any company admin)
+### Phase 9 — SaaS Admin Area ✅ Completed
+- [x] SaaS Admin dashboard (MRR, active tenants, churn)
+- [x] Company management (create, suspend, delete, impersonate)
+- [x] SaaS plan management (define plans with feature limits)
+- [x] Subscription assignment (assign plan to company, set trial/expiry)
+- [x] Company impersonation (log in as any company admin)
+
+> **Completed 2026-06-24** — `docs/completed/2026-06-24-1538-phase-9-saas-admin-area.md`. Built the
+> SaaS Admin (Tier 1) area: the platform dashboard gained a **Trialing** stat and a real **Recent
+> Tenants** table alongside the existing live Active/Churned/MRR metrics. New **Plans** CRUD
+> (`/saas/plans`) manages the sellable tiers with `limits` (max clients/admins, blank = unlimited),
+> an active toggle, and a guard that blocks deleting a plan with live subscriptions. A new
+> **Company detail** screen (`/saas/companies/{company}`) edits contact details, assigns/changes the
+> subscription (plan, status trialing/active/past_due/cancelled, billing window, trial — writing the
+> `company_subscriptions` row and keeping `companies.plan_id` in sync), suspends/reactivates, and
+> **soft-deletes** behind a typed-name confirmation. **Impersonation** (`Impersonation` service +
+> controller) lets the SaaS admin log in as a company admin with a persistent amber banner +
+> "Stop impersonating"; it refuses to target another SaaS admin or a user with no company, and logs
+> both start/stop to the activity log. The `stop-impersonating` route sits outside the `saas_admin`
+> group so it works while authenticated as the tenant. Sidebar gained **Plans** + the banner. Tests:
+> 226 passed (+25 new).
 
 ---
 

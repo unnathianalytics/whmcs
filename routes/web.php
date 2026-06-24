@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\InvoicePdfController;
 use App\Http\Controllers\Admin\TicketAttachmentController;
 use App\Http\Controllers\DashboardRedirectController;
+use App\Http\Controllers\Saas\ImpersonationController;
 use App\Livewire\Admin\ActivityLog\Index as AdminActivityLog;
 use App\Livewire\Admin\Clients\Index as AdminClients;
 use App\Livewire\Admin\Clients\Show as AdminClientShow;
@@ -20,7 +21,9 @@ use App\Livewire\Admin\TicketDepartments\Index as AdminTicketDepartments;
 use App\Livewire\Admin\Tickets\Index as AdminTickets;
 use App\Livewire\Admin\Tickets\Show as AdminTicketShow;
 use App\Livewire\Saas\Companies\Index as SaasCompanies;
+use App\Livewire\Saas\Companies\Show as SaasCompanyShow;
 use App\Livewire\Saas\Dashboard as SaasDashboard;
+use App\Livewire\Saas\Plans\Index as SaasPlans;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -33,7 +36,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('saas_admin')->prefix('saas')->name('saas.')->group(function () {
         Route::livewire('/', SaasDashboard::class)->name('dashboard');
         Route::livewire('companies', SaasCompanies::class)->name('companies');
+        Route::livewire('companies/{company}', SaasCompanyShow::class)->name('companies.show');
+        Route::livewire('plans', SaasPlans::class)->name('plans');
+        Route::post('impersonate/{user}', [ImpersonationController::class, 'start'])->name('impersonate');
     });
+
+    // Stop impersonating — reachable while authenticated AS the impersonated tenant user, so it lives
+    // outside the `saas_admin` group (the active user is not a SaaS admin mid-impersonation).
+    Route::post('stop-impersonating', [ImpersonationController::class, 'stop'])->name('impersonate.stop');
 
     // Company Admin area — tenant-scoped admins.
     Route::middleware('company_admin')->prefix('admin')->name('admin.')->group(function () {

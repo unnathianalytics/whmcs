@@ -52,6 +52,14 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
 
 /**
+ * Create a platform owner (SaaS admin) with global, cross-tenant scope.
+ */
+function saasAdmin(): User
+{
+    return User::factory()->create(['is_saas_admin' => true]);
+}
+
+/**
  * Create a company admin attached to an active, non-suspended company.
  *
  * @param  array<string, mixed>  $companyAttributes

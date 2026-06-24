@@ -19,6 +19,9 @@
                         <flux:sidebar.item icon="building-office-2" :href="route('saas.companies')" :current="request()->routeIs('saas.companies')" wire:navigate>
                             {{ __('Companies') }}
                         </flux:sidebar.item>
+                        <flux:sidebar.item icon="rectangle-stack" :href="route('saas.plans')" :current="request()->routeIs('saas.plans')" wire:navigate>
+                            {{ __('Plans') }}
+                        </flux:sidebar.item>
                     </flux:sidebar.group>
                 @else
                     <flux:sidebar.group :heading="__('Overview')" class="grid">
@@ -178,6 +181,16 @@
                 </flux:menu>
             </flux:dropdown>
         </flux:header>
+
+        @if (session()->has(\App\Services\Saas\Impersonation::SESSION_KEY))
+            <div class="bg-amber-500 px-4 py-2 text-center text-sm font-medium text-amber-950">
+                {{ __('You are impersonating :name.', ['name' => auth()->user()->name]) }}
+                <form method="POST" action="{{ route('impersonate.stop') }}" class="inline">
+                    @csrf
+                    <button type="submit" class="ml-2 underline">{{ __('Stop impersonating') }}</button>
+                </form>
+            </div>
+        @endif
 
         {{ $slot }}
 

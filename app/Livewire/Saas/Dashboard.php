@@ -4,6 +4,7 @@ namespace App\Livewire\Saas;
 
 use App\Models\Company;
 use App\Models\CompanySubscription;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -72,6 +73,36 @@ class Dashboard extends Component
     public function totalCompanies(): int
     {
         return Company::count();
+    }
+
+    /**
+     * What: Count of tenants whose latest subscription is trialing.
+     * Why: Distinguishes onboarding tenants (not yet paying) from established ones at a glance.
+     * When: Read by the dashboard stat cards on render.
+     */
+    #[Computed]
+    public function trialingTenants(): int
+    {
+        return Company::whereHas('subscription', function ($query): void {
+            $query->where('status', 'trialing');
+        })->count();
+    }
+
+    /**
+     * What: The ten most recently onboarded tenants with their plan and subscription status.
+     * Why: Gives the platform owner an immediate read on new signups and a jump-off to manage them.
+     * When: Rendered as the "Recent Tenants" table on the dashboard.
+     *
+     * @return Collection<int, Company>
+     */
+    #[Computed]
+    public function recentCompanies(): Collection
+    {
+        return Company::query()
+            ->with(['plan', 'subscription'])
+            ->latest()
+            ->take(10)
+            ->get();
     }
 
     public function render()
