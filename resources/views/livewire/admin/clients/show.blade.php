@@ -47,7 +47,7 @@
 
         {{-- Related modules (placeholders until later phases) + notes --}}
         <div class="flex flex-col gap-6 lg:col-span-2">
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
                 <flux:card>
                     <flux:text>{{ __('Services') }}</flux:text>
                     <flux:heading size="xl" class="mt-1">{{ $this->services->count() }}</flux:heading>
@@ -62,6 +62,11 @@
                     <flux:text>{{ __('Tickets') }}</flux:text>
                     <flux:heading size="xl" class="mt-1">{{ $this->tickets->count() }}</flux:heading>
                     <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Support requests') }}</flux:text>
+                </flux:card>
+                <flux:card>
+                    <flux:text>{{ __('Domains') }}</flux:text>
+                    <flux:heading size="xl" class="mt-1">{{ $this->domains->count() }}</flux:heading>
+                    <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Registrations') }}</flux:text>
                 </flux:card>
             </div>
 
@@ -226,6 +231,55 @@
                     </flux:table>
                 @else
                     <flux:text class="text-zinc-500">{{ __('No tickets yet.') }}</flux:text>
+                @endif
+            </flux:card>
+
+            {{-- Domains --}}
+            <flux:card>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <flux:heading size="lg">{{ __('Domains') }}</flux:heading>
+                        <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Domain registrations tracked for this client.') }}</flux:text>
+                    </div>
+                    @can('domains.view')
+                        <flux:button :href="route('admin.domains')" wire:navigate size="sm" variant="ghost" icon="arrow-up-right">
+                            {{ __('Manage') }}
+                        </flux:button>
+                    @endcan
+                </div>
+
+                <flux:separator class="my-4" />
+
+                @if ($this->domains->isNotEmpty())
+                    <flux:table>
+                        <flux:table.columns>
+                            <flux:table.column>{{ __('Domain') }}</flux:table.column>
+                            <flux:table.column>{{ __('Registrar') }}</flux:table.column>
+                            <flux:table.column>{{ __('Status') }}</flux:table.column>
+                            <flux:table.column>{{ __('Expires') }}</flux:table.column>
+                        </flux:table.columns>
+
+                        <flux:table.rows>
+                            @foreach ($this->domains as $domain)
+                                <flux:table.row wire:key="domain-{{ $domain->id }}">
+                                    <flux:table.cell class="font-medium">{{ $domain->domain_name }}</flux:table.cell>
+                                    <flux:table.cell>{{ $domain->registrar ?? __('—') }}</flux:table.cell>
+                                    <flux:table.cell>
+                                        <flux:badge :color="$domain->status->color()" size="sm">{{ $domain->status->label() }}</flux:badge>
+                                    </flux:table.cell>
+                                    <flux:table.cell>
+                                        @if ($domain->expires_at)
+                                            <flux:badge :color="$domain->urgencyColor()" size="sm">{{ $domain->expires_at->format('M j, Y') }}</flux:badge>
+                                        @else
+                                            <flux:text class="text-zinc-500">{{ __('—') }}</flux:text>
+                                        @endif
+                                    </flux:table.cell>
+                                </flux:table.row>
+                            @endforeach
+                        </flux:table.rows>
+                    </flux:table>
+                @else
+                    <flux:text class="text-zinc-500">{{ __('No domains yet.') }}</flux:text>
                 @endif
             </flux:card>
 

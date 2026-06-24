@@ -154,6 +154,14 @@ class Company extends Model
     }
 
     /**
+     * @return HasMany<Domain, $this>
+     */
+    public function domains(): HasMany
+    {
+        return $this->hasMany(Domain::class);
+    }
+
+    /**
      * What: Whether the company is currently suspended.
      * Why: Suspended tenants must be locked out of the panel without deleting their data.
      * When: Checked by `EnsureCompanyAdmin` on every company-admin request.

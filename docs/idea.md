@@ -348,10 +348,20 @@ settings               → key/value system settings
 - [x] Ticket thread view + reply form
 - [x] Status & priority management
 
-### Phase 6 — Domains
-- [ ] `Domain` model with `registered_at`, `expires_at`
-- [ ] Domain list per client with expiry badge
-- [ ] Create/edit domain entry
+### Phase 6 — Domains ✅ Completed
+- [x] `Domain` model with `registered_at`, `expires_at`
+- [x] Domain list per client with expiry badge
+- [x] Create/edit domain entry
+
+> **Completed 2026-06-24** — `docs/completed/2026-06-24-1023-phase-6-domains.md`. Built the Domains module:
+> `Domain` model (client-owned, tenant-isolated, soft-deletes, activity-logged) + `DomainStatus` enum
+> (Active/Expired/Pending Transfer/Cancelled) with the `ClientService` expiry helpers
+> (`isExpired`/`daysUntilExpiry`/`urgencyColor`). `/admin/domains` Flux screen with search, status + expiry
+> filters, sortable columns, create/edit/delete modals, and a **dedicated Renew action** (stamps
+> `last_renewed_at`, advances `expires_at`, reactivates expired domains). Status is **manual** in v1
+> (auto-expiry deferred to Phase 7). `DomainPolicy` gates on the already-seeded `domains.*` permissions.
+> Client profile gained a Domains stat + table card; sidebar Domains item enabled. 5 demo domains seeded.
+> Tests: 154 passed (+16 new).
 
 ### Phase 7 — Expiry Reminders
 - [ ] `ReminderRule` model + migration

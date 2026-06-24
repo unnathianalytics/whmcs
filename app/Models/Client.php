@@ -101,6 +101,14 @@ class Client extends Model
     }
 
     /**
+     * @return HasMany<Domain, $this>
+     */
+    public function domains(): HasMany
+    {
+        return $this->hasMany(Domain::class)->latest('expires_at');
+    }
+
+    /**
      * What: Configure the spatie activity log for clients.
      * Why: Client record changes are an auditable admin action; track the editable fields only.
      * When: Invoked automatically by the LogsActivity trait on create/update/delete.

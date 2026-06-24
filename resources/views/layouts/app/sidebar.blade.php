@@ -60,7 +60,13 @@
                         @else
                             <flux:sidebar.item icon="lifebuoy" :disabled="true">{{ __('Tickets') }}</flux:sidebar.item>
                         @endcan
-                        <flux:sidebar.item icon="globe-alt" :disabled="true">{{ __('Domains') }}</flux:sidebar.item>
+                        @can('domains.view')
+                            <flux:sidebar.item icon="globe-alt" :href="route('admin.domains')" :current="request()->routeIs('admin.domains*')" wire:navigate>
+                                {{ __('Domains') }}
+                            </flux:sidebar.item>
+                        @else
+                            <flux:sidebar.item icon="globe-alt" :disabled="true">{{ __('Domains') }}</flux:sidebar.item>
+                        @endcan
                     </flux:sidebar.group>
 
                     <flux:sidebar.group :heading="__('System')" class="grid">

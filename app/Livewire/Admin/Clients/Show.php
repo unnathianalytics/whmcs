@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Clients;
 use App\Models\Client;
 use App\Models\ClientNote;
 use App\Models\ClientService;
+use App\Models\Domain;
 use App\Models\Invoice;
 use App\Models\Ticket;
 use Flux\Flux;
@@ -125,6 +126,19 @@ class Show extends Component
     public function tickets(): Collection
     {
         return $this->client->tickets()->with('department')->get();
+    }
+
+    /**
+     * What: The client's domains, soonest expiry first, for the profile's Domains card.
+     * Why: Turns the Phase 2–5 placeholder into a real count + list with status and expiry urgency badges.
+     * When: Read on render of the client profile.
+     *
+     * @return Collection<int, Domain>
+     */
+    #[Computed]
+    public function domains(): Collection
+    {
+        return $this->client->domains()->get();
     }
 
     public function render()
