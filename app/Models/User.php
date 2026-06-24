@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -59,6 +60,19 @@ class User extends Authenticatable implements PasskeyUser
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * What: Tickets currently assigned to this admin.
+     * Why: Powers the "assigned to me" filter and the assignee column on the ticket queue; an admin only
+     *      ever sees their own company's tickets via the BelongsToCompany scope on `Ticket`.
+     * When: Read by the Tickets list when filtering/displaying the assignee.
+     *
+     * @return HasMany<Ticket, $this>
+     */
+    public function assignedTickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class, 'assigned_to');
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\ClientNote;
 use App\Models\ClientService;
 use App\Models\Invoice;
+use App\Models\Ticket;
 use Flux\Flux;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -111,6 +112,19 @@ class Show extends Component
     public function invoices(): Collection
     {
         return $this->client->invoices()->get();
+    }
+
+    /**
+     * What: The client's tickets, newest first, for the profile's Tickets card.
+     * Why: Turns the Phase 2–4 placeholder into a real count + list with status and priority badges.
+     * When: Read on render of the client profile.
+     *
+     * @return Collection<int, Ticket>
+     */
+    #[Computed]
+    public function tickets(): Collection
+    {
+        return $this->client->tickets()->with('department')->get();
     }
 
     public function render()

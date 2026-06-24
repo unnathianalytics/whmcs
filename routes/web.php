@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\InvoicePdfController;
+use App\Http\Controllers\Admin\TicketAttachmentController;
 use App\Http\Controllers\DashboardRedirectController;
 use App\Livewire\Admin\Clients\Index as AdminClients;
 use App\Livewire\Admin\Clients\Show as AdminClientShow;
@@ -10,6 +11,9 @@ use App\Livewire\Admin\Invoices\Show as AdminInvoiceShow;
 use App\Livewire\Admin\Products\Index as AdminProducts;
 use App\Livewire\Admin\Services\Index as AdminServices;
 use App\Livewire\Admin\TaxRates\Index as AdminTaxRates;
+use App\Livewire\Admin\TicketDepartments\Index as AdminTicketDepartments;
+use App\Livewire\Admin\Tickets\Index as AdminTickets;
+use App\Livewire\Admin\Tickets\Show as AdminTicketShow;
 use App\Livewire\Saas\Companies\Index as SaasCompanies;
 use App\Livewire\Saas\Dashboard as SaasDashboard;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +41,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('invoices/{invoice}', AdminInvoiceShow::class)->name('invoices.show');
         Route::get('invoices/{invoice}/pdf', InvoicePdfController::class)->name('invoices.pdf');
         Route::livewire('tax-rates', AdminTaxRates::class)->name('tax-rates');
+        Route::livewire('tickets', AdminTickets::class)->name('tickets');
+        Route::livewire('tickets/{ticket}', AdminTicketShow::class)->name('tickets.show');
+        Route::get('ticket-attachments/{attachment}/download', TicketAttachmentController::class)->name('ticket-attachments.download');
+        Route::livewire('ticket-departments', AdminTicketDepartments::class)->name('ticket-departments');
     });
 });
 

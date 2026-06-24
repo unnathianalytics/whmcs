@@ -87,11 +87,12 @@ class DatabaseSeeder extends Seeder
         $companyAdmin->syncRoles(['manager']);
 
         // Demo client data for the Clients module (Phase 2), the product catalog & services (Phase 3),
-        // then invoices, tax rates and payments (Phase 4).
+        // then invoices, tax rates and payments (Phase 4), then support tickets (Phase 5).
         $this->call([
             ClientSeeder::class,
             ProductSeeder::class,
             InvoiceSeeder::class,
+            TicketSeeder::class,
         ]);
     }
 }

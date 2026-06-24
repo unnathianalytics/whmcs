@@ -53,7 +53,13 @@
                         @else
                             <flux:sidebar.item icon="document-text" :disabled="true">{{ __('Invoices') }}</flux:sidebar.item>
                         @endcan
-                        <flux:sidebar.item icon="lifebuoy" :disabled="true">{{ __('Tickets') }}</flux:sidebar.item>
+                        @can('tickets.view')
+                            <flux:sidebar.item icon="lifebuoy" :href="route('admin.tickets')" :current="request()->routeIs('admin.tickets*')" wire:navigate>
+                                {{ __('Tickets') }}
+                            </flux:sidebar.item>
+                        @else
+                            <flux:sidebar.item icon="lifebuoy" :disabled="true">{{ __('Tickets') }}</flux:sidebar.item>
+                        @endcan
                         <flux:sidebar.item icon="globe-alt" :disabled="true">{{ __('Domains') }}</flux:sidebar.item>
                     </flux:sidebar.group>
 
@@ -61,6 +67,11 @@
                         @can('invoices.view')
                             <flux:sidebar.item icon="receipt-percent" :href="route('admin.tax-rates')" :current="request()->routeIs('admin.tax-rates*')" wire:navigate>
                                 {{ __('Tax Rates') }}
+                            </flux:sidebar.item>
+                        @endcan
+                        @can('tickets.view')
+                            <flux:sidebar.item icon="inbox-stack" :href="route('admin.ticket-departments')" :current="request()->routeIs('admin.ticket-departments*')" wire:navigate>
+                                {{ __('Departments') }}
                             </flux:sidebar.item>
                         @endcan
                         <flux:sidebar.item icon="bell-alert" :disabled="true">{{ __('Reminders') }}</flux:sidebar.item>

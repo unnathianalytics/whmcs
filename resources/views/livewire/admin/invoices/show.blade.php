@@ -13,7 +13,8 @@
                     @endif
                 </div>
                 <flux:text class="mt-1">
-                    <a href="{{ route('admin.clients.show', $invoice->client_id) }}" wire:navigate class="hover:underline">
+                    <a href="{{ route('admin.clients.show', $invoice->client_id) }}" wire:navigate
+                        class="hover:underline">
                         {{ $invoice->client?->name }}
                     </a>
                 </flux:text>
@@ -22,7 +23,8 @@
 
         <div class="flex items-center gap-2">
             @can('invoices.view')
-                <flux:button :href="route('admin.invoices.pdf', $invoice)" target="_blank" variant="ghost" icon="arrow-down-tray">
+                <flux:button :href="route('admin.invoices.pdf', $invoice)" target="_blank" variant="ghost"
+                    icon="arrow-down-tray">
                     {{ __('Download PDF') }}
                 </flux:button>
             @endcan
@@ -63,20 +65,26 @@
                         @forelse ($this->items as $item)
                             <flux:table.row :key="$item->id">
                                 <flux:table.cell class="font-medium">{{ $item->description }}</flux:table.cell>
-                                <flux:table.cell align="end">{{ number_format((float) $item->quantity, 2) }}</flux:table.cell>
-                                <flux:table.cell align="end">{{ number_format((float) $item->unit_price, 2) }}</flux:table.cell>
-                                <flux:table.cell align="end">{{ number_format((float) $item->tax_rate, 2) }}%</flux:table.cell>
-                                <flux:table.cell align="end">{{ number_format((float) $item->line_total, 2) }}</flux:table.cell>
+                                <flux:table.cell align="end">{{ number_format((float) $item->quantity, 2) }}
+                                </flux:table.cell>
+                                <flux:table.cell align="end">{{ number_format((float) $item->unit_price, 2) }}
+                                </flux:table.cell>
+                                <flux:table.cell align="end">{{ number_format((float) $item->tax_rate, 2) }}%
+                                </flux:table.cell>
+                                <flux:table.cell align="end">{{ number_format((float) $item->line_total, 2) }}
+                                </flux:table.cell>
                                 <flux:table.cell align="end">
                                     @can('invoices.update')
                                         <flux:dropdown align="end">
                                             <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
                                             <flux:menu>
-                                                <flux:menu.item icon="pencil-square" wire:click="openEditItemModal({{ $item->id }})">
+                                                <flux:menu.item icon="pencil-square"
+                                                    wire:click="openEditItemModal({{ $item->id }})">
                                                     {{ __('Edit') }}
                                                 </flux:menu.item>
                                                 <flux:menu.separator />
-                                                <flux:menu.item icon="trash" variant="danger" wire:click="confirmDeleteItem({{ $item->id }})">
+                                                <flux:menu.item icon="trash" variant="danger"
+                                                    wire:click="confirmDeleteItem({{ $item->id }})">
                                                     {{ __('Remove') }}
                                                 </flux:menu.item>
                                             </flux:menu>
@@ -115,7 +123,8 @@
                             <dt class="text-zinc-500">{{ __('Paid') }}</dt>
                             <dd>{{ $invoice->currency }} {{ number_format($invoice->amountPaid(), 2) }}</dd>
                         </div>
-                        <div class="flex justify-between py-1 font-semibold {{ $invoice->balance() > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400' }}">
+                        <div
+                            class="flex justify-between py-1 font-semibold {{ $invoice->balance() > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400' }}">
                             <dt>{{ __('Balance') }}</dt>
                             <dd>{{ $invoice->currency }} {{ number_format($invoice->balance(), 2) }}</dd>
                         </div>
@@ -152,10 +161,12 @@
                                     <flux:table.cell>{{ $transaction->paid_at->format('M j, Y') }}</flux:table.cell>
                                     <flux:table.cell>{{ $transaction->method->label() }}</flux:table.cell>
                                     <flux:table.cell>{{ $transaction->reference ?? __('—') }}</flux:table.cell>
-                                    <flux:table.cell align="end">{{ $invoice->currency }} {{ number_format((float) $transaction->amount, 2) }}</flux:table.cell>
+                                    <flux:table.cell align="end">{{ $invoice->currency }}
+                                        {{ number_format((float) $transaction->amount, 2) }}</flux:table.cell>
                                     <flux:table.cell align="end">
                                         @can('invoices.update')
-                                            <flux:button size="sm" variant="ghost" icon="trash" wire:click="confirmDeletePayment({{ $transaction->id }})" />
+                                            <flux:button size="sm" variant="ghost" icon="trash"
+                                                wire:click="confirmDeletePayment({{ $transaction->id }})" />
                                         @endcan
                                     </flux:table.cell>
                                 </flux:table.row>
@@ -210,7 +221,7 @@
     </div>
 
     {{-- Header edit modal --}}
-    <flux:modal wire:model.self="showHeaderModal" class="md:w-[28rem]">
+    <flux:modal wire:model.self="showHeaderModal" class="md:w-md">
         <form wire:submit="saveHeader" class="flex flex-col gap-6">
             <flux:heading size="lg">{{ __('Edit Invoice') }}</flux:heading>
 
@@ -218,7 +229,8 @@
                 <flux:label>{{ __('Status') }}</flux:label>
                 <flux:select wire:model="status">
                     @foreach ($this->statuses as $statusOption)
-                        <flux:select.option value="{{ $statusOption->value }}">{{ $statusOption->label() }}</flux:select.option>
+                        <flux:select.option value="{{ $statusOption->value }}">{{ $statusOption->label() }}
+                        </flux:select.option>
                     @endforeach
                 </flux:select>
                 <flux:error name="status" />
@@ -253,9 +265,10 @@
     </flux:modal>
 
     {{-- Line item modal --}}
-    <flux:modal wire:model.self="showItemModal" class="md:w-[30rem]">
+    <flux:modal wire:model.self="showItemModal" class="md:w-120">
         <form wire:submit="saveItem" class="flex flex-col gap-6">
-            <flux:heading size="lg">{{ $editingItemId ? __('Edit Line Item') : __('Add Line Item') }}</flux:heading>
+            <flux:heading size="lg">{{ $editingItemId ? __('Edit Line Item') : __('Add Line Item') }}
+            </flux:heading>
 
             <flux:field>
                 <flux:label>{{ __('Description') }}</flux:label>
@@ -298,7 +311,7 @@
     </flux:modal>
 
     {{-- Payment modal --}}
-    <flux:modal wire:model.self="showPaymentModal" class="md:w-[28rem]">
+    <flux:modal wire:model.self="showPaymentModal" class="md:w-md">
         <form wire:submit="savePayment" class="flex flex-col gap-6">
             <flux:heading size="lg">{{ __('Record Payment') }}</flux:heading>
 
@@ -319,7 +332,8 @@
                 <flux:label>{{ __('Method') }}</flux:label>
                 <flux:select wire:model="paymentMethod">
                     @foreach ($this->methods as $methodOption)
-                        <flux:select.option value="{{ $methodOption->value }}">{{ $methodOption->label() }}</flux:select.option>
+                        <flux:select.option value="{{ $methodOption->value }}">{{ $methodOption->label() }}
+                        </flux:select.option>
                     @endforeach
                 </flux:select>
                 <flux:error name="paymentMethod" />
@@ -367,7 +381,8 @@
         <div class="flex flex-col gap-6">
             <div>
                 <flux:heading size="lg">{{ __('Remove payment?') }}</flux:heading>
-                <flux:text class="mt-2">{{ __('The balance will be re-evaluated; a settled invoice may re-open.') }}</flux:text>
+                <flux:text class="mt-2">
+                    {{ __('The balance will be re-evaluated; a settled invoice may re-open.') }}</flux:text>
             </div>
             <div class="flex justify-end gap-2">
                 <flux:modal.close>

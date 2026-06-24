@@ -60,8 +60,8 @@
                 </flux:card>
                 <flux:card>
                     <flux:text>{{ __('Tickets') }}</flux:text>
-                    <flux:heading size="xl" class="mt-1">0</flux:heading>
-                    <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Coming soon') }}</flux:text>
+                    <flux:heading size="xl" class="mt-1">{{ $this->tickets->count() }}</flux:heading>
+                    <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Support requests') }}</flux:text>
                 </flux:card>
             </div>
 
@@ -173,6 +173,59 @@
                     </flux:table>
                 @else
                     <flux:text class="text-zinc-500">{{ __('No invoices yet.') }}</flux:text>
+                @endif
+            </flux:card>
+
+            {{-- Tickets --}}
+            <flux:card>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <flux:heading size="lg">{{ __('Tickets') }}</flux:heading>
+                        <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Support requests raised for this client.') }}</flux:text>
+                    </div>
+                    @can('tickets.view')
+                        <flux:button :href="route('admin.tickets')" wire:navigate size="sm" variant="ghost" icon="arrow-up-right">
+                            {{ __('Manage') }}
+                        </flux:button>
+                    @endcan
+                </div>
+
+                <flux:separator class="my-4" />
+
+                @if ($this->tickets->isNotEmpty())
+                    <flux:table>
+                        <flux:table.columns>
+                            <flux:table.column>{{ __('Number') }}</flux:table.column>
+                            <flux:table.column>{{ __('Subject') }}</flux:table.column>
+                            <flux:table.column>{{ __('Department') }}</flux:table.column>
+                            <flux:table.column>{{ __('Priority') }}</flux:table.column>
+                            <flux:table.column>{{ __('Status') }}</flux:table.column>
+                        </flux:table.columns>
+
+                        <flux:table.rows>
+                            @foreach ($this->tickets as $ticket)
+                                <flux:table.row wire:key="ticket-{{ $ticket->id }}">
+                                    <flux:table.cell>
+                                        @can('tickets.view')
+                                            <a href="{{ route('admin.tickets.show', $ticket) }}" wire:navigate class="font-medium hover:underline">{{ $ticket->number }}</a>
+                                        @else
+                                            <span class="font-medium">{{ $ticket->number }}</span>
+                                        @endcan
+                                    </flux:table.cell>
+                                    <flux:table.cell class="max-w-xs truncate">{{ $ticket->subject }}</flux:table.cell>
+                                    <flux:table.cell>{{ $ticket->department?->name ?? __('—') }}</flux:table.cell>
+                                    <flux:table.cell>
+                                        <flux:badge :color="$ticket->priority->color()" size="sm">{{ $ticket->priority->label() }}</flux:badge>
+                                    </flux:table.cell>
+                                    <flux:table.cell>
+                                        <flux:badge :color="$ticket->status->color()" size="sm">{{ $ticket->status->label() }}</flux:badge>
+                                    </flux:table.cell>
+                                </flux:table.row>
+                            @endforeach
+                        </flux:table.rows>
+                    </flux:table>
+                @else
+                    <flux:text class="text-zinc-500">{{ __('No tickets yet.') }}</flux:text>
                 @endif
             </flux:card>
 
