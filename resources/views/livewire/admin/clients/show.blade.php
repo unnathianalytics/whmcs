@@ -55,8 +55,8 @@
                 </flux:card>
                 <flux:card>
                     <flux:text>{{ __('Invoices') }}</flux:text>
-                    <flux:heading size="xl" class="mt-1">0</flux:heading>
-                    <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Coming soon') }}</flux:text>
+                    <flux:heading size="xl" class="mt-1">{{ $this->invoices->count() }}</flux:heading>
+                    <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Billing documents') }}</flux:text>
                 </flux:card>
                 <flux:card>
                     <flux:text>{{ __('Tickets') }}</flux:text>
@@ -120,6 +120,59 @@
                     </flux:table>
                 @else
                     <flux:text class="text-zinc-500">{{ __('No services yet.') }}</flux:text>
+                @endif
+            </flux:card>
+
+            {{-- Invoices --}}
+            <flux:card>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <flux:heading size="lg">{{ __('Invoices') }}</flux:heading>
+                        <flux:text size="sm" class="mt-1 text-zinc-500">{{ __('Billing documents raised for this client.') }}</flux:text>
+                    </div>
+                    @can('invoices.view')
+                        <flux:button :href="route('admin.invoices')" wire:navigate size="sm" variant="ghost" icon="arrow-up-right">
+                            {{ __('Manage') }}
+                        </flux:button>
+                    @endcan
+                </div>
+
+                <flux:separator class="my-4" />
+
+                @if ($this->invoices->isNotEmpty())
+                    <flux:table>
+                        <flux:table.columns>
+                            <flux:table.column>{{ __('Number') }}</flux:table.column>
+                            <flux:table.column>{{ __('Issued') }}</flux:table.column>
+                            <flux:table.column>{{ __('Total') }}</flux:table.column>
+                            <flux:table.column>{{ __('Status') }}</flux:table.column>
+                        </flux:table.columns>
+
+                        <flux:table.rows>
+                            @foreach ($this->invoices as $invoice)
+                                <flux:table.row wire:key="invoice-{{ $invoice->id }}">
+                                    <flux:table.cell>
+                                        @can('invoices.view')
+                                            <a href="{{ route('admin.invoices.show', $invoice) }}" wire:navigate class="font-medium hover:underline">{{ $invoice->number }}</a>
+                                        @else
+                                            <span class="font-medium">{{ $invoice->number }}</span>
+                                        @endcan
+                                    </flux:table.cell>
+                                    <flux:table.cell>{{ $invoice->issue_date->format('M j, Y') }}</flux:table.cell>
+                                    <flux:table.cell>{{ $invoice->currency }} {{ number_format((float) $invoice->total, 2) }}</flux:table.cell>
+                                    <flux:table.cell>
+                                        @if ($invoice->isOverdue())
+                                            <flux:badge color="red" size="sm">{{ __('Overdue') }}</flux:badge>
+                                        @else
+                                            <flux:badge :color="$invoice->status->color()" size="sm">{{ $invoice->status->label() }}</flux:badge>
+                                        @endif
+                                    </flux:table.cell>
+                                </flux:table.row>
+                            @endforeach
+                        </flux:table.rows>
+                    </flux:table>
+                @else
+                    <flux:text class="text-zinc-500">{{ __('No invoices yet.') }}</flux:text>
                 @endif
             </flux:card>
 

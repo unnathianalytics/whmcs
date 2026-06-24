@@ -9,12 +9,8 @@
     </div>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <flux:input
-            wire:model.live.debounce.300ms="search"
-            icon="magnifying-glass"
-            placeholder="{{ __('Search services...') }}"
-            class="max-w-sm"
-        />
+        <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass"
+            placeholder="{{ __('Search services...') }}" class="max-w-sm" />
 
         <flux:select wire:model.live="status" placeholder="{{ __('All statuses') }}" class="max-w-44">
             <flux:select.option value="">{{ __('All statuses') }}</flux:select.option>
@@ -34,13 +30,16 @@
         <flux:table.columns>
             <flux:table.column>{{ __('Client') }}</flux:table.column>
             <flux:table.column>{{ __('Product') }}</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'price'" :direction="$sortDirection" wire:click="sort('price')">
+            <flux:table.column sortable :sorted="$sortBy === 'price'" :direction="$sortDirection"
+                wire:click="sort('price')">
                 {{ __('Price') }}
             </flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'status'" :direction="$sortDirection" wire:click="sort('status')">
+            <flux:table.column sortable :sorted="$sortBy === 'status'" :direction="$sortDirection"
+                wire:click="sort('status')">
                 {{ __('Status') }}
             </flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'expires_at'" :direction="$sortDirection" wire:click="sort('expires_at')">
+            <flux:table.column sortable :sorted="$sortBy === 'expires_at'" :direction="$sortDirection"
+                wire:click="sort('expires_at')">
                 {{ __('Expires') }}
             </flux:table.column>
             <flux:table.column></flux:table.column>
@@ -50,7 +49,8 @@
             @forelse ($this->services as $service)
                 <flux:table.row :key="$service->id">
                     <flux:table.cell>
-                        <a href="{{ route('admin.clients.show', $service->client_id) }}" wire:navigate class="flex flex-col hover:underline">
+                        <a href="{{ route('admin.clients.show', $service->client_id) }}" wire:navigate
+                            class="flex flex-col hover:underline">
                             <span class="font-medium">{{ $service->client?->name ?? __('—') }}</span>
                             @if ($service->label)
                                 <flux:text size="sm">{{ $service->label }}</flux:text>
@@ -61,11 +61,13 @@
                     <flux:table.cell>
                         <div class="flex flex-col">
                             <span>{{ $service->product?->name ?? __('Custom') }}</span>
-                            <flux:text size="sm" class="text-zinc-500">{{ $service->billing_cycle->label() }}</flux:text>
+                            <flux:text size="sm" class="text-zinc-500">{{ $service->billing_cycle->label() }}
+                            </flux:text>
                         </div>
                     </flux:table.cell>
 
-                    <flux:table.cell>{{ $service->currency }} {{ number_format((float) $service->price, 2) }}</flux:table.cell>
+                    <flux:table.cell>{{ $service->currency }} {{ number_format((float) $service->price, 2) }}
+                    </flux:table.cell>
 
                     <flux:table.cell>
                         <flux:badge :color="$service->status->color()" size="sm">
@@ -94,7 +96,8 @@
                                 @endcan
                                 @can('services.delete')
                                     <flux:menu.separator />
-                                    <flux:menu.item icon="trash" variant="danger" wire:click="confirmDelete({{ $service->id }})">
+                                    <flux:menu.item icon="trash" variant="danger"
+                                        wire:click="confirmDelete({{ $service->id }})">
                                         {{ __('Delete') }}
                                     </flux:menu.item>
                                 @endcan
@@ -113,10 +116,11 @@
     </flux:table>
 
     {{-- Assign / edit modal --}}
-    <flux:modal wire:model.self="showFormModal" class="md:w-[34rem]">
+    <flux:modal wire:model.self="showFormModal" class="md:w-136">
         <form wire:submit="save" class="flex flex-col gap-6">
             <div>
-                <flux:heading size="lg">{{ $editingId ? __('Edit Service') : __('Assign Service') }}</flux:heading>
+                <flux:heading size="lg">{{ $editingId ? __('Edit Service') : __('Assign Service') }}
+                </flux:heading>
                 <flux:text class="mt-2">{{ __('Subscribe a client to a product.') }}</flux:text>
             </div>
 
@@ -125,7 +129,8 @@
                     <flux:label>{{ __('Client') }}</flux:label>
                     <flux:select wire:model="clientId" placeholder="{{ __('Select client') }}">
                         @foreach ($this->clients as $clientOption)
-                            <flux:select.option value="{{ $clientOption->id }}">{{ $clientOption->name }}</flux:select.option>
+                            <flux:select.option value="{{ $clientOption->id }}">{{ $clientOption->name }}
+                            </flux:select.option>
                         @endforeach
                     </flux:select>
                     <flux:error name="clientId" />
@@ -136,7 +141,8 @@
                     <flux:select wire:model.live="productId" placeholder="{{ __('Custom (none)') }}">
                         <flux:select.option value="">{{ __('Custom (none)') }}</flux:select.option>
                         @foreach ($this->products as $productOption)
-                            <flux:select.option value="{{ $productOption->id }}">{{ $productOption->name }}</flux:select.option>
+                            <flux:select.option value="{{ $productOption->id }}">{{ $productOption->name }}
+                            </flux:select.option>
                         @endforeach
                     </flux:select>
                     <flux:error name="productId" />
@@ -154,7 +160,8 @@
                     <flux:label>{{ __('Cycle') }}</flux:label>
                     <flux:select wire:model="billingCycle">
                         @foreach ($this->cycles as $cycleOption)
-                            <flux:select.option value="{{ $cycleOption->value }}">{{ $cycleOption->label() }}</flux:select.option>
+                            <flux:select.option value="{{ $cycleOption->value }}">{{ $cycleOption->label() }}
+                            </flux:select.option>
                         @endforeach
                     </flux:select>
                     <flux:error name="billingCycle" />
@@ -197,7 +204,8 @@
                 <flux:label>{{ __('Status') }}</flux:label>
                 <flux:select wire:model="statusField">
                     @foreach ($this->statuses as $statusOption)
-                        <flux:select.option value="{{ $statusOption->value }}">{{ $statusOption->label() }}</flux:select.option>
+                        <flux:select.option value="{{ $statusOption->value }}">{{ $statusOption->label() }}
+                        </flux:select.option>
                     @endforeach
                 </flux:select>
                 <flux:error name="statusField" />
@@ -213,7 +221,8 @@
                 <flux:modal.close>
                     <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
                 </flux:modal.close>
-                <flux:button type="submit" variant="primary">{{ $editingId ? __('Save') : __('Assign') }}</flux:button>
+                <flux:button type="submit" variant="primary">{{ $editingId ? __('Save') : __('Assign') }}
+                </flux:button>
             </div>
         </form>
     </flux:modal>
@@ -223,7 +232,9 @@
         <div class="flex flex-col gap-6">
             <div>
                 <flux:heading size="lg">{{ __('Delete service?') }}</flux:heading>
-                <flux:text class="mt-2">{{ __('This removes the service from the client. This action can be reversed by support.') }}</flux:text>
+                <flux:text class="mt-2">
+                    {{ __('This removes the service from the client. This action can be reversed by support.') }}
+                </flux:text>
             </div>
 
             <div class="flex justify-end gap-2">

@@ -114,6 +114,30 @@ class Company extends Model
     }
 
     /**
+     * @return HasMany<Invoice, $this>
+     */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    /**
+     * @return HasMany<TaxRate, $this>
+     */
+    public function taxRates(): HasMany
+    {
+        return $this->hasMany(TaxRate::class);
+    }
+
+    /**
+     * @return HasMany<Transaction, $this>
+     */
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    /**
      * What: Whether the company is currently suspended.
      * Why: Suspended tenants must be locked out of the panel without deleting their data.
      * When: Checked by `EnsureCompanyAdmin` on every company-admin request.

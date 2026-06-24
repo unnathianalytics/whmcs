@@ -85,6 +85,14 @@ class Client extends Model
     }
 
     /**
+     * @return HasMany<Invoice, $this>
+     */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class)->latest('issue_date');
+    }
+
+    /**
      * What: Configure the spatie activity log for clients.
      * Why: Client record changes are an auditable admin action; track the editable fields only.
      * When: Invoked automatically by the LogsActivity trait on create/update/delete.

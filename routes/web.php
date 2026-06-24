@@ -1,11 +1,15 @@
 <?php
 
+use App\Http\Controllers\Admin\InvoicePdfController;
 use App\Http\Controllers\DashboardRedirectController;
 use App\Livewire\Admin\Clients\Index as AdminClients;
 use App\Livewire\Admin\Clients\Show as AdminClientShow;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
+use App\Livewire\Admin\Invoices\Index as AdminInvoices;
+use App\Livewire\Admin\Invoices\Show as AdminInvoiceShow;
 use App\Livewire\Admin\Products\Index as AdminProducts;
 use App\Livewire\Admin\Services\Index as AdminServices;
+use App\Livewire\Admin\TaxRates\Index as AdminTaxRates;
 use App\Livewire\Saas\Companies\Index as SaasCompanies;
 use App\Livewire\Saas\Dashboard as SaasDashboard;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +33,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('clients/{client}', AdminClientShow::class)->name('clients.show');
         Route::livewire('products', AdminProducts::class)->name('products');
         Route::livewire('services', AdminServices::class)->name('services');
+        Route::livewire('invoices', AdminInvoices::class)->name('invoices');
+        Route::livewire('invoices/{invoice}', AdminInvoiceShow::class)->name('invoices.show');
+        Route::get('invoices/{invoice}/pdf', InvoicePdfController::class)->name('invoices.pdf');
+        Route::livewire('tax-rates', AdminTaxRates::class)->name('tax-rates');
     });
 });
 

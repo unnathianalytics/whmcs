@@ -86,10 +86,12 @@ class DatabaseSeeder extends Seeder
         app(PermissionRegistrar::class)->setPermissionsTeamId($company->id);
         $companyAdmin->syncRoles(['manager']);
 
-        // Demo client data for the Clients module (Phase 2), then the product catalog & services (Phase 3).
+        // Demo client data for the Clients module (Phase 2), the product catalog & services (Phase 3),
+        // then invoices, tax rates and payments (Phase 4).
         $this->call([
             ClientSeeder::class,
             ProductSeeder::class,
+            InvoiceSeeder::class,
         ]);
     }
 }

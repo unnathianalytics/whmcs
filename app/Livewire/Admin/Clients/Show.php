@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Clients;
 use App\Models\Client;
 use App\Models\ClientNote;
 use App\Models\ClientService;
+use App\Models\Invoice;
 use Flux\Flux;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -97,6 +98,19 @@ class Show extends Component
     public function services(): Collection
     {
         return $this->client->services()->with('product')->get();
+    }
+
+    /**
+     * What: The client's invoices, newest first, for the profile's Invoices card.
+     * Why: Turns the Phase 2/3 placeholder into a real count + list with status badges and totals.
+     * When: Read on render of the client profile.
+     *
+     * @return Collection<int, Invoice>
+     */
+    #[Computed]
+    public function invoices(): Collection
+    {
+        return $this->client->invoices()->get();
     }
 
     public function render()
