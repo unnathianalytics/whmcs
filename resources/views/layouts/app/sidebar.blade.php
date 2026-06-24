@@ -87,8 +87,24 @@
                         @else
                             <flux:sidebar.item icon="bell-alert" :disabled="true">{{ __('Reminders') }}</flux:sidebar.item>
                         @endcan
-                        <flux:sidebar.item icon="shield-check" :disabled="true">{{ __('Roles') }}</flux:sidebar.item>
-                        <flux:sidebar.item icon="cog-6-tooth" :disabled="true">{{ __('Settings') }}</flux:sidebar.item>
+                        @can('roles.view')
+                            <flux:sidebar.item icon="shield-check" :href="route('admin.roles')" :current="request()->routeIs('admin.roles*')" wire:navigate>
+                                {{ __('Roles') }}
+                            </flux:sidebar.item>
+                        @else
+                            <flux:sidebar.item icon="shield-check" :disabled="true">{{ __('Roles') }}</flux:sidebar.item>
+                        @endcan
+                        @can('settings.view')
+                            <flux:sidebar.item icon="clock" :href="route('admin.activity-log')" :current="request()->routeIs('admin.activity-log*')" wire:navigate>
+                                {{ __('Activity Log') }}
+                            </flux:sidebar.item>
+                            <flux:sidebar.item icon="cog-6-tooth" :href="route('admin.settings')" :current="request()->routeIs('admin.settings*')" wire:navigate>
+                                {{ __('Settings') }}
+                            </flux:sidebar.item>
+                        @else
+                            <flux:sidebar.item icon="clock" :disabled="true">{{ __('Activity Log') }}</flux:sidebar.item>
+                            <flux:sidebar.item icon="cog-6-tooth" :disabled="true">{{ __('Settings') }}</flux:sidebar.item>
+                        @endcan
                     </flux:sidebar.group>
                 @endif
             </flux:sidebar.nav>

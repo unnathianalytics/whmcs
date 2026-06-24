@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\InvoicePdfController;
 use App\Http\Controllers\Admin\TicketAttachmentController;
 use App\Http\Controllers\DashboardRedirectController;
+use App\Livewire\Admin\ActivityLog\Index as AdminActivityLog;
 use App\Livewire\Admin\Clients\Index as AdminClients;
 use App\Livewire\Admin\Clients\Show as AdminClientShow;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
@@ -11,7 +12,9 @@ use App\Livewire\Admin\Invoices\Index as AdminInvoices;
 use App\Livewire\Admin\Invoices\Show as AdminInvoiceShow;
 use App\Livewire\Admin\Products\Index as AdminProducts;
 use App\Livewire\Admin\Reminders\Index as AdminReminders;
+use App\Livewire\Admin\Roles\Index as AdminRoles;
 use App\Livewire\Admin\Services\Index as AdminServices;
+use App\Livewire\Admin\Settings\Index as AdminSettings;
 use App\Livewire\Admin\TaxRates\Index as AdminTaxRates;
 use App\Livewire\Admin\TicketDepartments\Index as AdminTicketDepartments;
 use App\Livewire\Admin\Tickets\Index as AdminTickets;
@@ -49,6 +52,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('ticket-departments', AdminTicketDepartments::class)->name('ticket-departments');
         Route::livewire('domains', AdminDomains::class)->name('domains');
         Route::livewire('reminders', AdminReminders::class)->name('reminders');
+        Route::livewire('roles', AdminRoles::class)->name('roles');
+        Route::livewire('activity-log', AdminActivityLog::class)->name('activity-log');
+        Route::livewire('settings', AdminSettings::class)->name('settings');
     });
 });
 

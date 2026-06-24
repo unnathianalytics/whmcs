@@ -385,14 +385,26 @@ settings               → key/value system settings
 > to **`Company.email`**. `ReminderRulePolicy` gates on the already-seeded `reminders.*` permissions; sidebar
 > Reminders item enabled; 8 default rules seeded per company. Tests: 174 passed (+20 new).
 
-### Phase 8 — Settings & Polish
-- [ ] Settings key/value store
-- [ ] Company / billing / email / gateway settings UI
-- [ ] Reminder settings section (default lead times, global on/off)
-- [ ] Dashboard charts wired to real data
-- [ ] Dashboard expiry widgets wired to real data
-- [ ] **Role–Permission UI** — Livewire screen at `/admin/roles` to create roles, list all permissions, and sync permissions to roles (checkbox matrix)
-- [ ] Admin activity log viewer (powered by spatie/laravel-activitylog)
+### Phase 8 — Settings & Polish ✅ Completed
+- [x] Settings key/value store
+- [x] Company / billing / email / gateway settings UI
+- [x] Reminder settings section (default lead times, global on/off)
+- [x] Dashboard charts wired to real data
+- [x] Dashboard expiry widgets wired to real data
+- [x] **Role–Permission UI** — Livewire screen at `/admin/roles` to create roles, list all permissions, and sync permissions to roles (checkbox matrix)
+- [x] Admin activity log viewer (powered by spatie/laravel-activitylog)
+
+> **Completed 2026-06-24** — `docs/completed/2026-06-24-1230-phase-8-settings-and-polish.md`. Built the
+> Settings & Polish phase: a tenant-scoped `settings` key/value store (`Setting` model + `CompanySettings`
+> service with default map, per-request memoisation, and encrypted secret keys) behind a tabbed
+> `/admin/settings` screen (Company / Billing / Email / Localisation / Gateways / Reminders) with write-only
+> secrets. The company **dashboard** is now live: real stat cards, merged service+domain "Expiring Soon"
+> and "Already Expired" watchlists, and a Chart.js (CDN) six-month revenue bar chart. Added the
+> **Role–Permission UI** (`/admin/roles`, team-scoped create/edit/delete + module-grouped permission matrix)
+> and the **Activity Log viewer** (`/admin/activity-log`, causer-scoped feed with event/admin filters).
+> Sidebar Roles/Settings enabled, Activity Log added; routes registered; `SettingsSeeder` seeds defaults
+> per company. Settings/Roles/ActivityLog gate on the already-seeded `settings.*` / `roles.*` permissions.
+> Tests: 201 passed (+27 new).
 
 ### Phase 9 — SaaS Admin Area
 - [ ] SaaS Admin dashboard (MRR, active tenants, churn)

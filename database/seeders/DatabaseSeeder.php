@@ -95,6 +95,7 @@ class DatabaseSeeder extends Seeder
             TicketSeeder::class,
             DomainSeeder::class,
             ReminderRuleSeeder::class,
+            SettingsSeeder::class,
         ]);
     }
 }

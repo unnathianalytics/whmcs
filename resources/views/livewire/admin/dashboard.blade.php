@@ -34,7 +34,22 @@
                 <flux:icon.exclamation-triangle variant="micro" class="text-yellow-500" />
                 {{ __('Expiring Soon (7 days)') }}
             </flux:heading>
-            <flux:text class="mt-2">{{ __('Services and domains nearing expiry will appear here.') }}</flux:text>
+
+            @forelse ($this->expiringSoon as $item)
+                <div class="mt-3 flex items-center justify-between gap-2 border-t border-zinc-100 pt-3 dark:border-zinc-700">
+                    <div class="min-w-0">
+                        <flux:text class="truncate font-medium">{{ $item['name'] }}</flux:text>
+                        <flux:text size="sm" class="text-zinc-400">
+                            {{ $item['type'] }}@if ($item['client']) · {{ $item['client'] }}@endif
+                        </flux:text>
+                    </div>
+                    <flux:badge :color="$item['color']" size="sm">
+                        {{ $item['days'] }} {{ __('days') }}
+                    </flux:badge>
+                </div>
+            @empty
+                <flux:text class="mt-2">{{ __('Nothing expiring in the next 7 days.') }}</flux:text>
+            @endforelse
         </flux:card>
 
         <flux:card>
@@ -42,12 +57,70 @@
                 <flux:icon.x-circle variant="micro" class="text-red-500" />
                 {{ __('Already Expired') }}
             </flux:heading>
-            <flux:text class="mt-2">{{ __('Overdue renewals needing attention will appear here.') }}</flux:text>
+
+            @forelse ($this->expired as $item)
+                <div class="mt-3 flex items-center justify-between gap-2 border-t border-zinc-100 pt-3 dark:border-zinc-700">
+                    <div class="min-w-0">
+                        <flux:text class="truncate font-medium">{{ $item['name'] }}</flux:text>
+                        <flux:text size="sm" class="text-zinc-400">
+                            {{ $item['type'] }}@if ($item['client']) · {{ $item['client'] }}@endif
+                        </flux:text>
+                    </div>
+                    <flux:badge color="red" size="sm">
+                        {{ $item['expires_at']->format('M j, Y') }}
+                    </flux:badge>
+                </div>
+            @empty
+                <flux:text class="mt-2">{{ __('No overdue renewals.') }}</flux:text>
+            @endforelse
         </flux:card>
     </div>
 
     <flux:card>
         <flux:heading size="lg">{{ __('Revenue (last 6 months)') }}</flux:heading>
-        <flux:text class="mt-2">{{ __('Chart will be wired to real data in a later phase.') }}</flux:text>
+
+        <div
+            wire:ignore
+            x-data="{
+                chart: null,
+                init() {
+                    const render = () => {
+                        if (this.chart) { this.chart.destroy(); }
+                        this.chart = new Chart(this.$refs.canvas, {
+                            type: 'bar',
+                            data: {
+                                labels: @js($this->revenueSeries['labels']),
+                                datasets: [{
+                                    label: @js(__('Revenue')),
+                                    data: @js($this->revenueSeries['values']),
+                                    backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                                    borderColor: 'rgb(16, 185, 129)',
+                                    borderWidth: 1,
+                                    borderRadius: 4,
+                                }],
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: { y: { beginAtZero: true } },
+                            },
+                        });
+                    };
+
+                    if (window.Chart) {
+                        render();
+                    } else {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4';
+                        script.onload = render;
+                        document.head.appendChild(script);
+                    }
+                },
+            }"
+            class="mt-4 h-64"
+        >
+            <canvas x-ref="canvas"></canvas>
+        </div>
     </flux:card>
 </div>
