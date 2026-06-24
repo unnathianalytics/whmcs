@@ -1,11 +1,15 @@
 {
     "agents": [
-        "claude_code"
+        "claude_code",
+        "codex",
+        "antigravity"
     ],
     "cloud": false,
     "guidelines": true,
     "packages": [
-        "livewire/blaze"
+        "spatie/laravel-activitylog",
+        "livewire/blaze",
+        "spatie/laravel-permission"
     ],
     "skills": [
         "fortify-development",
@@ -14,6 +18,7 @@
         "livewire-development",
         "pest-testing",
         "tailwindcss-development",
-        "blaze-optimize"
+        "blaze-optimize",
+        "laravel-permission-development"
     ]
 }

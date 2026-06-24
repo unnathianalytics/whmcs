@@ -24,7 +24,7 @@
     "require-dev": {
         "fakerphp/faker": "^1.24",
         "larastan/larastan": "^3.9",
-        "laravel/boost": "^2.2",
+        "laravel/boost": "^2.4",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.27",
@@ -83,8 +83,7 @@
             "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
-            "@php artisan boost:update --ansi"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
@@ -117,9 +116,11 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "repositories": [{
-        "name": "flux-pro",
-        "type": "composer",
-        "url": "https://composer.fluxui.dev"
-    }]
+    "repositories": [
+        {
+            "name": "flux-pro",
+            "type": "composer",
+            "url": "https://composer.fluxui.dev"
+        }
+    ]
 }
