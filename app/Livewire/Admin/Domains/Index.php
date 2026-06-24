@@ -5,6 +5,9 @@ namespace App\Livewire\Admin\Domains;
 use App\Enums\DomainStatus;
 use App\Models\Client;
 use App\Models\Domain;
+use App\Models\ReminderLog;
+use App\Models\ReminderRule;
+use App\Support\ReminderDispatcher;
 use Flux\Flux;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -267,6 +270,11 @@ class Index extends Component
             'status' => $domain->status === DomainStatus::Expired ? DomainStatus::Active : $domain->status,
         ]);
 
+        // Re-arm reminders for the new cycle: clearing prior log rows lets the next interval send again.
+        ReminderLog::where('remindable_type', $domain->getMorphClass())
+            ->where('remindable_id', $domain->id)
+            ->delete();
+
         $this->showRenewModal = false;
         $this->renewingId = null;
 
@@ -292,6 +300,25 @@ class Index extends Component
         $this->deletingId = null;
 
         Flux::toast(variant: 'success', text: __('Domain deleted.'));
+    }
+
+    /**
+     * What: Immediately send this domain's expiry reminder(s) via the company's active domain rules.
+     * Why: Admins sometimes need to nudge a client outside the daily schedule; the dispatcher honours the
+     *      rule channels/templates but bypasses the days_before gate. Gated on `reminders.manage`.
+     * When: Triggered from the row's "Send reminder" menu item.
+     */
+    public function sendReminder(int $domainId, ReminderDispatcher $dispatcher): void
+    {
+        $this->authorize('create', ReminderRule::class);
+
+        $domain = Domain::with('client')->findOrFail($domainId);
+        $sent = $dispatcher->sendNow(auth()->user()->company, $domain);
+
+        Flux::toast(
+            variant: $sent > 0 ? 'success' : 'warning',
+            text: $sent > 0 ? __('Reminder sent.') : __('No active domain reminder rule to send.'),
+        );
     }
 
     protected function resetForm(): void

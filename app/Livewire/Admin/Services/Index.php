@@ -7,6 +7,9 @@ use App\Enums\ServiceStatus;
 use App\Models\Client;
 use App\Models\ClientService;
 use App\Models\Product;
+use App\Models\ReminderLog;
+use App\Models\ReminderRule;
+use App\Support\ReminderDispatcher;
 use Flux\Flux;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -213,7 +216,16 @@ class Index extends Component
         if ($this->editingId !== null) {
             $service = ClientService::findOrFail($this->editingId);
             $this->authorize('update', $service);
+            $previousExpiry = $service->expires_at?->toDateString();
             $service->update($attributes);
+
+            // Pushing the expiry out renews the cycle: clear prior reminder logs so the next interval re-sends.
+            if (($attributes['expires_at'] ?? null) !== $previousExpiry) {
+                ReminderLog::where('remindable_type', $service->getMorphClass())
+                    ->where('remindable_id', $service->id)
+                    ->delete();
+            }
+
             Flux::toast(variant: 'success', text: __('Service updated.'));
         } else {
             $this->authorize('create', ClientService::class);
@@ -244,6 +256,25 @@ class Index extends Component
         $this->deletingId = null;
 
         Flux::toast(variant: 'success', text: __('Service deleted.'));
+    }
+
+    /**
+     * What: Immediately send this service's expiry reminder(s) via the company's active service rules.
+     * Why: Admins sometimes need to nudge a client outside the daily schedule; the dispatcher honours the
+     *      rule channels/templates but bypasses the days_before gate. Gated on `reminders.manage`.
+     * When: Triggered from the row's "Send reminder" menu item.
+     */
+    public function sendReminder(int $serviceId, ReminderDispatcher $dispatcher): void
+    {
+        $this->authorize('create', ReminderRule::class);
+
+        $service = ClientService::with(['client', 'product'])->findOrFail($serviceId);
+        $sent = $dispatcher->sendNow(auth()->user()->company, $service);
+
+        Flux::toast(
+            variant: $sent > 0 ? 'success' : 'warning',
+            text: $sent > 0 ? __('Reminder sent.') : __('No active service reminder rule to send.'),
+        );
     }
 
     protected function resetForm(): void

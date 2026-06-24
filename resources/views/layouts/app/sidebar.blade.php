@@ -80,7 +80,13 @@
                                 {{ __('Departments') }}
                             </flux:sidebar.item>
                         @endcan
-                        <flux:sidebar.item icon="bell-alert" :disabled="true">{{ __('Reminders') }}</flux:sidebar.item>
+                        @can('reminders.view')
+                            <flux:sidebar.item icon="bell-alert" :href="route('admin.reminders')" :current="request()->routeIs('admin.reminders*')" wire:navigate>
+                                {{ __('Reminders') }}
+                            </flux:sidebar.item>
+                        @else
+                            <flux:sidebar.item icon="bell-alert" :disabled="true">{{ __('Reminders') }}</flux:sidebar.item>
+                        @endcan
                         <flux:sidebar.item icon="shield-check" :disabled="true">{{ __('Roles') }}</flux:sidebar.item>
                         <flux:sidebar.item icon="cog-6-tooth" :disabled="true">{{ __('Settings') }}</flux:sidebar.item>
                     </flux:sidebar.group>

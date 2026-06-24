@@ -90,6 +90,11 @@
                                         {{ __('Renew') }}
                                     </flux:menu.item>
                                 @endcan
+                                @can('reminders.manage')
+                                    <flux:menu.item icon="bell-alert" wire:click="sendReminder({{ $domain->id }})">
+                                        {{ __('Send reminder') }}
+                                    </flux:menu.item>
+                                @endcan
                                 @can('domains.delete')
                                     <flux:menu.separator />
                                     <flux:menu.item icon="trash" variant="danger"

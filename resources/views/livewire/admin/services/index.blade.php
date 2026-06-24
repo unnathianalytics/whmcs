@@ -94,6 +94,11 @@
                                         {{ __('Edit') }}
                                     </flux:menu.item>
                                 @endcan
+                                @can('reminders.manage')
+                                    <flux:menu.item icon="bell-alert" wire:click="sendReminder({{ $service->id }})">
+                                        {{ __('Send reminder') }}
+                                    </flux:menu.item>
+                                @endcan
                                 @can('services.delete')
                                     <flux:menu.separator />
                                     <flux:menu.item icon="trash" variant="danger"

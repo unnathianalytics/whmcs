@@ -94,6 +94,7 @@ class DatabaseSeeder extends Seeder
             InvoiceSeeder::class,
             TicketSeeder::class,
             DomainSeeder::class,
+            ReminderRuleSeeder::class,
         ]);
     }
 }

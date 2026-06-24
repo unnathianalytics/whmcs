@@ -363,14 +363,27 @@ settings               → key/value system settings
 > Client profile gained a Domains stat + table card; sidebar Domains item enabled. 5 demo domains seeded.
 > Tests: 154 passed (+16 new).
 
-### Phase 7 — Expiry Reminders
-- [ ] `ReminderRule` model + migration
-- [ ] `ReminderLog` model + migration
-- [ ] Reminder rules admin UI (create/edit/delete rules per resource type)
-- [ ] `php artisan reminders:send` command — daily scheduled job
-- [ ] Reminder email Mailable + Blade template (supports template variables)
-- [ ] Reminder log viewer (shows sent history per client/resource)
-- [ ] Manual "send reminder now" action from service/domain detail page
+### Phase 7 — Expiry Reminders ✅ Completed
+- [x] `ReminderRule` model + migration
+- [x] `ReminderLog` model + migration
+- [x] Reminder rules admin UI (create/edit/delete rules per resource type)
+- [x] `php artisan reminders:send` command — daily scheduled job
+- [x] Reminder email Mailable + Blade template (supports template variables)
+- [x] Reminder log viewer (shows sent history per client/resource)
+- [x] Manual "send reminder now" action from service/domain detail page
+
+> **Completed 2026-06-24** — `docs/completed/2026-06-24-1148-phase-7-expiry-reminders.md`. Built the Expiry
+> Reminders module: `ReminderRule` (tenant-scoped, soft-deletes, activity-logged) + `ReminderLog` (immutable
+> audit/dedupe ledger with a `(remindable, days_before, channel)` unique key) + `ReminderResourceType` enum
+> (Service | Domain). `/admin/reminders` Flux screen with a **Rules** CRUD tab and a **Sent Log** tab. A
+> daily **`reminders:send`** command (scheduled 08:00) scans every tenant's `expires_at`, dispatches deduped
+> reminders via a shared `ReminderDispatcher`, and **auto-expires** lapsed Active services/domains (the
+> Phase 6 deferral). Queued `ExpiryReminderMail` + markdown template with `{client_name}`,
+> `{product_name}`/`{domain_name}`, `{expires_at}`, `{days_left}` substitution. A **"Send reminder"** row
+> action on Services and Domains forces a send; renewing a domain (or editing a service's expiry) clears its
+> logs to re-arm the next cycle. Rules scoped **global per company** by resource type (v1); admin copy goes
+> to **`Company.email`**. `ReminderRulePolicy` gates on the already-seeded `reminders.*` permissions; sidebar
+> Reminders item enabled; 8 default rules seeded per company. Tests: 174 passed (+20 new).
 
 ### Phase 8 — Settings & Polish
 - [ ] Settings key/value store
